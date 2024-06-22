@@ -51,22 +51,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: "MainPage",
+  name: 'MainPage',
   setup() {
-    const mainMessage = ref("Welcome XYZ!");
+    const mainMessage = ref('Welcome XYZ!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
-    const itemName = ref("");
-    const itemLocation = ref("");
-    const itemDescription = ref("");
-    const itemWatering = ref("");
+    const itemName = ref('');
+    const itemLocation = ref('');
+    const itemDescription = ref('');
+    const itemWatering = ref('');
 
     const changeMainMessage = () => {
-      if (mainMessage.value === "Welcome XYZ!") {
-        mainMessage.value = "Your Plants Page";
+      if (mainMessage.value === 'Welcome XYZ!') {
+        mainMessage.value = 'Your Plants Page';
       }
     };
 
@@ -85,17 +85,17 @@ export default defineComponent({
     const addItem = () => {
       // Here you can handle adding the item to your data or perform any necessary actions
       console.log(
-        "Adding item:",
+        'Adding item:',
         itemName.value,
         itemDescription.value,
         itemLocation.value,
-        itemWatering.value
+        itemWatering.value,
       );
       // Optionally, you can reset the form fields and close the modal
-      itemName.value = "";
-      itemDescription.value = "";
-      itemLocation.value = "";
-      itemWatering.value = "";
+      itemName.value = '';
+      itemDescription.value = '';
+      itemLocation.value = '';
+      itemWatering.value = '';
       closeModal();
     };
 

@@ -11,13 +11,11 @@ import LandingPage from './components/LandingPage.vue';
 export default defineComponent({
   name: 'App',
   components: {
-    LandingPage
-  
-  }
+    LandingPage,
+  },
 });
 </script>
 
 <style>
 /* Your styles here */
 </style>
-

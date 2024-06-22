@@ -13,24 +13,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: "LandingPage",
+  name: 'LandingPage',
   setup() {
     const router = useRouter();
 
     const onRegClick = () => {
-      router.push("/register-page");
+      router.push('/register-page');
     };
 
     const onLogClick = () => {
-      router.push("/login-page");
+      router.push('/login-page');
     };
 
     const goToMainPage = () => {
-      router.push("/main-page");
+      router.push('/main-page');
     };
 
     return {

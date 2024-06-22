@@ -28,20 +28,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: "LoginPage",
+  name: 'LoginPage',
   setup() {
     const router = useRouter();
-    const login = ref("");
-    const password = ref("");
+    const login = ref('');
+    const password = ref('');
 
     const onSubmit = () => {
       // Handle form submission
-      console.log("Input 1:", login.value);
-      console.log("Input 2:", password.value);
+      console.log('Input 1:', login.value);
+      console.log('Input 2:', password.value);
       // You can add more logic here, e.g., form validation, API calls, etc.
     };
 
@@ -77,7 +77,7 @@ export default defineComponent({
 }
 
 .back-button img {
-  width: 60px; 
+  width: 60px;
   height: auto;
   margin-left: 35px;
   cursor: pointer;
@@ -93,7 +93,7 @@ export default defineComponent({
   padding: 5px;
   position: relative;
   z-index: 1;
-  top: -30px; 
+  top: -30px;
   opacity: 0;
   transition: opacity 1s;
 }
@@ -104,7 +104,7 @@ export default defineComponent({
 }
 
 .logo img {
-  width: 290px; 
+  width: 290px;
   height: auto;
   margin-right: 35px;
 }

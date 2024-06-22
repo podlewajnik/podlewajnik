@@ -50,27 +50,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: "RegisterPage",
+  name: 'RegisterPage',
   setup() {
     const router = useRouter();
 
-    const name = ref("");
-    const email = ref("");
-    const login = ref("");
-    const password = ref("");
-    const confirmPassword = ref("");
+    const name = ref('');
+    const email = ref('');
+    const login = ref('');
+    const password = ref('');
+    const confirmPassword = ref('');
 
     const onSubmit = () => {
       // Handle form submission
-      console.log("Input 1:", name.value);
-      console.log("Input 2:", email.value);
-      console.log("Input 3:", login.value);
-      console.log("Input 4:", password.value);
-      console.log("Input 5:", confirmPassword.value);
+      console.log('Input 1:', name.value);
+      console.log('Input 2:', email.value);
+      console.log('Input 3:', login.value);
+      console.log('Input 4:', password.value);
+      console.log('Input 5:', confirmPassword.value);
       // You can add more logic here, e.g., form validation, API calls, etc.
     };
 
