@@ -8,11 +8,11 @@ test.describe('Actions on landing page', () => {
   test('Click on button Register', async ({ page }) => {
     await page.getByRole('button', { name: 'Register' }).click();
     // await page.waitForNavigation();
-    await expect(page).toHaveURL('http://localhost:5173/register-page');
+    await expect(page).toHaveURL('/register-page');
   });
 
   test('Click on button Login', async ({ page }) => {
     await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page).toHaveURL('http://localhost:5173/login-page');
+    await expect(page).toHaveURL('/login-page');
   });
 });
