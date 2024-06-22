@@ -44,6 +44,9 @@
         </form>
       </div>
     </div>
+    <div class="logo-mobile">
+      <img src="@/assets/logo.png" alt="Logo" />
+    </div>
   </div>
 </template>
 

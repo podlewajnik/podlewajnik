@@ -13,11 +13,11 @@
     <form @submit.prevent="onSubmit">
       <div class="form-group">
         <label for="login">Login:</label>
-        <input id="login" v-model="input1" type="text" required />
+        <input id="login" v-model="login" type="text" required />
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input id="passowrd" v-model="input2" type="text" required />
+        <input id="passowrd" v-model="password" type="text" required />
       </div>
       <button type="submit">Confirm</button>
     </form>
@@ -35,13 +35,13 @@ export default defineComponent({
   name: "LoginPage",
   setup() {
     const router = useRouter();
-    const input1 = ref("");
-    const input2 = ref("");
+    const login = ref("");
+    const password = ref("");
 
     const onSubmit = () => {
       // Handle form submission
-      console.log("Input 1:", input1.value);
-      console.log("Input 2:", input2.value);
+      console.log("Input 1:", login.value);
+      console.log("Input 2:", password.value);
       // You can add more logic here, e.g., form validation, API calls, etc.
     };
 
@@ -50,8 +50,8 @@ export default defineComponent({
     };
 
     return {
-      input1,
-      input2,
+      login,
+      password,
       onSubmit,
       goBack,
     };

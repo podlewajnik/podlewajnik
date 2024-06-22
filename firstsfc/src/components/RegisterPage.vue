@@ -13,17 +13,21 @@
     <form @submit.prevent="onSubmit">
       <div class="form-group">
         <label for="registerName">Name:</label>
-        <input id="registerName" v-model="input1" type="text" required />
+        <input id="registerName" v-model="name" type="text" required />
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email:</label>
+        <input id="registerEmail" v-model="email" type="text" required />
       </div>
       <div class="form-group">
         <label for="registerLogin">Login:</label>
-        <input id="registerLogin" v-model="input2" type="text" required />
+        <input id="registerLogin" v-model="login" type="text" required />
       </div>
       <div class="form-group">
         <label for="registerPassword">Password:</label>
         <input
           id="registerPassoword"
-          v-model="input3"
+          v-model="password"
           type="password"
           required
         />
@@ -31,8 +35,8 @@
       <div class="form-group">
         <label for="ConfirmPassword">Confirm Password:</label>
         <input
-          id="ConfirmPassoword"
-          v-model="input4"
+          id="ConfirmPassword"
+          v-model="confirmPassword"
           type="password"
           required
         />
@@ -54,17 +58,19 @@ export default defineComponent({
   setup() {
     const router = useRouter();
 
-    const input1 = ref("");
-    const input2 = ref("");
-    const input3 = ref("");
-    const input4 = ref("");
+    const name = ref("");
+    const email = ref("");
+    const login = ref("");
+    const password = ref("");
+    const confirmPassword = ref("");
 
     const onSubmit = () => {
       // Handle form submission
-      console.log("Input 1:", input1.value);
-      console.log("Input 2:", input2.value);
-      console.log("Input 3:", input3.value);
-      console.log("Input 4:", input4.value);
+      console.log("Input 1:", name.value);
+      console.log("Input 2:", email.value);
+      console.log("Input 3:", login.value);
+      console.log("Input 4:", password.value);
+      console.log("Input 5:", confirmPassword.value);
       // You can add more logic here, e.g., form validation, API calls, etc.
     };
 
@@ -73,10 +79,11 @@ export default defineComponent({
     };
 
     return {
-      input1,
-      input2,
-      input3,
-      input4,
+      name,
+      email,
+      login,
+      password,
+      confirmPassword,
       onSubmit,
       goBack,
     };
