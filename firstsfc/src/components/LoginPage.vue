@@ -19,7 +19,7 @@
         <label for="password">Password:</label>
         <input id="passowrd" v-model="password" type="text" required />
       </div>
-      <button type="submit">Confirm</button>
+      <button type="submit">Login</button>
     </form>
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
