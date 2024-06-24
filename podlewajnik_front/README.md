@@ -1,18 +1,23 @@
 # Podlewajnik
 
-This template should help get you started developing with Vue 3 in Vite.
+This template should help get you started developing with Vue in Vite.
 
 ## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+[VSCode](https://code.visualstudio.com/)
 
-## Type Support for `.vue` Imports in TS
+## Add Vue extension
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+In VSCode marketplace eextensions search for 'Vue - Official' and install it
 
-## Customize configuration
+## Install Node.js
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+choose one of the recommended methods from https://nodejs.org/en/download/package-manager
+
+Version:
+node v20.10.0
+npm 10.2.3
+
 
 ## Project Setup
 
@@ -25,11 +30,11 @@ npm install
 ```sh
 npm run dev
 ```
-
+<!-- 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
-npm run build
+npm run build -->
 ```
 
 ### Run End-to-End Tests with [Playwright](https://playwright.dev)
