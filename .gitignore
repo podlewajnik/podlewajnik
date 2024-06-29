@@ -1,3 +1,9 @@
+# General
+.DS_Store
+
+# Ignore database used for initial development
+*.db*
+
 # GitHub Node gitignore
 
 # Logs
