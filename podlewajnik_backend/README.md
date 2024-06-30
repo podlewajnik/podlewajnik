@@ -10,7 +10,7 @@ Use `poetry install --with dev --sync` to install all required and dev dependenc
 
 ## Runnik backend in dev mode
 
-To run backend in dev mode use `fastapi run dev ./src/main.py` from within `podlewajnik_backend` directory.
+To run backend in dev mode use `poetry run fastapi dev ./src/podlewajnik/main.py` from within `podlewajnik_backend` directory.
 
 By default it should start at port 8080 but details will be in logs.
 
