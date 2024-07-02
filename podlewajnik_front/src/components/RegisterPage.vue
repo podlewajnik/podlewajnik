@@ -10,7 +10,7 @@
       </div>
     </div>
     <h1>Register</h1>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label for="registerName">Name:</label>
         <input id="registerName" v-model="name" type="text" required />
@@ -26,7 +26,7 @@
       <div class="form-group">
         <label for="registerPassword">Password:</label>
         <input
-          id="registerPassoword"
+          id="registerPassword"
           v-model="password"
           type="password"
           required
@@ -43,6 +43,8 @@
       </div>
       <button type="submit">Confirm</button>
     </form>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success">{{ successMessage }}</p>
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
     </div>
@@ -57,27 +59,44 @@ import axios from 'axios';
 export default defineComponent({
   name: 'RegisterPage',
   setup() {
-    const router = useRouter();
-
+  
     const name = ref('');
     const email = ref('');
     const login = ref('');
     const password = ref('');
     const confirmPassword = ref('');
+    const errorMessage = ref('');
+    const successMessage = ref('');
+    const router = useRouter();
 
-    const onSubmit = () => {
-      // Handle form submission
-      console.log('Input 1:', name.value);
-      console.log('Input 2:', email.value);
-      console.log('Input 3:', login.value);
-      console.log('Input 4:', password.value);
-      console.log('Input 5:', confirmPassword.value);
-      // You can add more logic here, e.g., form validation, API calls, etc.
+    const handleSubmit = async () => {
+      try {
+
+          const response = await axios.post('http://localhost:8000/register', {
+          fullname: name.value,
+          email_address: email.value,
+          username: login.value,
+          password: password.value,
+        });
+        successMessage.value = 'Registration successful!';
+        errorMessage.value = '';
+        console.log('Registration successful:', response.data);
+        router.push('/main-page')
+        // Handle successful registration (e.g., redirect to login page)
+      } catch (error) {
+        console.error('Registration error:', error);
+        errorMessage.value = 'Failed to register. Please try again.';
+        successMessage.value = '';
+      }
     };
+
 
     const goBack = () => {
       router.go(-1);
     };
+
+
+
 
     return {
       name,
@@ -85,7 +104,9 @@ export default defineComponent({
       login,
       password,
       confirmPassword,
-      onSubmit,
+      errorMessage,
+      successMessage,
+      handleSubmit,
       goBack,
     };
   },
@@ -110,7 +131,7 @@ export default defineComponent({
 }
 
 .back-button img {
-  width: 60px; /* Adjust width as needed */
+  width: 60px; 
   height: auto;
   margin-left: 35px;
   cursor: pointer;
