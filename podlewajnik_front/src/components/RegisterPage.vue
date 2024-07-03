@@ -61,10 +61,9 @@
         >
       </div>
       <button type="submit">Confirm</button>
-      <div v-if="apiError">{{ apiError }}</div>
     </form>
-    <!-- <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    <p v-if="successMessage" class="success">{{ successMessage }}</p> -->
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success">{{ successMessage }}</p>
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
     </div>
@@ -89,8 +88,8 @@ export default defineComponent({
     const loginErrors = ref<string[]>([]);
     const passwordErrors = ref<string[]>([]);
     const confirmPasswordErrors = ref<string[]>([]);
-    // const errorMessage = ref('');
-    // const successMessage = ref('');
+    const errorMessage = ref('');
+    const successMessage = ref('');
     const apiError = ref('');
     const router = useRouter();
 
@@ -101,7 +100,7 @@ export default defineComponent({
       if (name.length < 1 || name.length > 30) {
         errors.push('Login must be between 1 and 30 characters.');
       }
-      
+
       return errors;
     };
 
@@ -169,27 +168,12 @@ export default defineComponent({
       return errors;
     };
 
-    // const handleSubmit = async () => {
-    //   try {
-    //     const response = await axios.post('http://localhost:8000/register', {
-    //       fullname: name.value,
-    //       email_address: email.value,
-    //       username: login.value,
-    //       password: password.value,
-    //     });
-    //     successMessage.value = 'Registration successful!';
-    //     errorMessage.value = '';
-    //     console.log('Registration successful:', response.data);
-    //     router.push('/main-page');
-    //     // Handle successful registration (e.g., redirect to login page)
-    //   } catch (error) {
-    //     console.error('Registration error:', error);
-    //     errorMessage.value = 'Failed to register. Please try again.';
-    //     successMessage.value = '';
-    //   }
-    // };
+    //Submit function:
 
     const handleSubmit = async () => {
+      console.log('handleSubmit called');
+
+      // Perform validation
       nameErrors.value = validateName(name.value);
       loginErrors.value = validateLogin(login.value);
       emailErrors.value = validateEmail(email.value);
@@ -200,28 +184,46 @@ export default defineComponent({
       );
 
       if (
-        !nameErrors.value &&
-        !loginErrors.value &&
-        !emailErrors.value &&
-        !passwordErrors.value &&
-        !confirmPasswordErrors.value
+        !nameErrors.value.length &&
+        !loginErrors.value.length &&
+        !emailErrors.value.length &&
+        !passwordErrors.value.length &&
+        !confirmPasswordErrors.value.length
       ) {
         try {
+          console.log('Sending data to backend:', {
+            fullname: name.value,
+            email_address: email.value,
+            username: login.value,
+            password: password.value,
+          });
+
           const response = await axios.post('http://localhost:8000/register', {
             fullname: name.value,
             email_address: email.value,
             username: login.value,
             password: password.value,
           });
-          if (response.data.success) {
-            // Navigate to the main page after successful registration
-            router.push('/main-page'); // or use this.$router.push('/main') if using Vue Router
-          } else {
-            apiError.value = 'Failed to register. Please try again.';
-          }
+
+          console.log('Backend response:', response.data);
+
+          successMessage.value = 'Registration successful!';
+          errorMessage.value = '';
+          console.log('Registration successful:', response.data);
+          router.push('/main-page');
         } catch (error) {
-          apiError.value = 'Failed to register. Please try again.';
+          console.error('Registration error:', error);
+          errorMessage.value = 'Failed to register. Please try again.';
+          successMessage.value = '';
         }
+      } else {
+        console.log('Validation errors:', {
+          nameErrors: nameErrors.value,
+          loginErrors: loginErrors.value,
+          emailErrors: emailErrors.value,
+          passwordErrors: passwordErrors.value,
+          confirmPasswordErrors: confirmPasswordErrors.value,
+        });
       }
     };
 
@@ -235,8 +237,8 @@ export default defineComponent({
       login,
       password,
       confirmPassword,
-      // errorMessage,
-      // successMessage,
+      errorMessage,
+      successMessage,
       nameErrors,
       loginErrors,
       emailErrors,
