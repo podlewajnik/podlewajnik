@@ -10,27 +10,39 @@
       </div>
     </div>
     <h1>Register</h1>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label for="registerName">Name:</label>
         <input id="registerName" v-model="name" type="text" required />
+        <span v-for="error in nameErrors" :key="error" class="error">{{
+          error
+        }}</span>
       </div>
       <div class="form-group">
         <label for="registerEmail">Email:</label>
         <input id="registerEmail" v-model="email" type="text" required />
+        <span v-for="error in emailErrors" :key="error" class="error">{{
+          error
+        }}</span>
       </div>
       <div class="form-group">
         <label for="registerLogin">Login:</label>
         <input id="registerLogin" v-model="login" type="text" required />
+        <span v-for="error in loginErrors" :key="error" class="error">{{
+          error
+        }}</span>
       </div>
       <div class="form-group">
         <label for="registerPassword">Password:</label>
         <input
-          id="registerPassoword"
+          id="registerPassword"
           v-model="password"
           type="password"
           required
         />
+        <span v-for="error in passwordErrors" :key="error" class="error">{{
+          error
+        }}</span>
       </div>
       <div class="form-group">
         <label for="ConfirmPassword">Confirm Password:</label>
@@ -40,9 +52,18 @@
           type="password"
           required
         />
+        <div v-if="confirmPasswordErrors.length" class="errors"></div>
+        <span
+          v-for="error in confirmPasswordErrors"
+          :key="error"
+          class="error"
+          >{{ error }}</span
+        >
       </div>
       <button type="submit">Confirm</button>
     </form>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success">{{ successMessage }}</p>
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
     </div>
@@ -57,22 +78,153 @@ import axios from 'axios';
 export default defineComponent({
   name: 'RegisterPage',
   setup() {
-    const router = useRouter();
-
     const name = ref('');
     const email = ref('');
     const login = ref('');
     const password = ref('');
     const confirmPassword = ref('');
+    const nameErrors = ref<string[]>([]);
+    const emailErrors = ref<string[]>([]);
+    const loginErrors = ref<string[]>([]);
+    const passwordErrors = ref<string[]>([]);
+    const confirmPasswordErrors = ref<string[]>([]);
+    const errorMessage = ref('');
+    const successMessage = ref('');
+    const apiError = ref('');
+    const router = useRouter();
 
-    const onSubmit = () => {
-      // Handle form submission
-      console.log('Input 1:', name.value);
-      console.log('Input 2:', email.value);
-      console.log('Input 3:', login.value);
-      console.log('Input 4:', password.value);
-      console.log('Input 5:', confirmPassword.value);
-      // You can add more logic here, e.g., form validation, API calls, etc.
+    //Validation:
+
+    const validateName = (name: string) => {
+      const errors: string[] = [];
+      if (name.length < 1 || name.length > 30) {
+        errors.push('Login must be between 1 and 30 characters.');
+      }
+
+      return errors;
+    };
+
+    const validateEmail = (email: string) => {
+      const errors: string[] = [];
+      if (email.length < 6 || email.length > 100) {
+        errors.push('Email must be between 6 and 100 characters.');
+      }
+      if (!email.includes('@')) {
+        errors.push('Email must contain an "@" symbol.');
+      }
+      if (/\s/.test(email)) {
+        errors.push('Email cannot contain spaces.');
+      }
+      // Simple regex for basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errors.push('Invalid email address.');
+      }
+      return errors;
+    };
+
+    const validateLogin = (login: string) => {
+      const errors: string[] = [];
+      if (login.length < 6 || login.length > 20) {
+        errors.push('Login must be between 6 and 20 characters.');
+      }
+      if (/\s/.test(login)) {
+        errors.push('Login cannot contain spaces.');
+      }
+      return errors;
+    };
+
+    const validatePassword = (password: string) => {
+      const errors: string[] = [];
+      if (password.length < 6 || password.length > 20) {
+        errors.push('Password must be between 6 and 20 characters.');
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push('Password must contain at least one uppercase letter.');
+      }
+      if (!/[a-z]/.test(password)) {
+        errors.push('Password must contain at least one lowercase letter.');
+      }
+      if (!/[0-9]/.test(password)) {
+        errors.push('Password must contain at least one digit.');
+      }
+      if (!/[^A-Za-z0-9]/.test(password)) {
+        errors.push('Password must contain at least one special character.');
+      }
+      if (/\s/.test(password)) {
+        errors.push('Password cannot contain spaces.');
+      }
+      return errors;
+    };
+
+    const validateConfirmPassword = (
+      password: string,
+      confirmPassword: string,
+    ) => {
+      const errors: string[] = [];
+      if (password !== confirmPassword) {
+        errors.push('Passwords do not match.');
+      }
+      return errors;
+    };
+
+    //Submit function:
+
+    const handleSubmit = async () => {
+      console.log('handleSubmit called');
+
+      // Perform validation
+      nameErrors.value = validateName(name.value);
+      loginErrors.value = validateLogin(login.value);
+      emailErrors.value = validateEmail(email.value);
+      passwordErrors.value = validatePassword(password.value);
+      confirmPasswordErrors.value = validateConfirmPassword(
+        password.value,
+        confirmPassword.value,
+      );
+
+      if (
+        !nameErrors.value.length &&
+        !loginErrors.value.length &&
+        !emailErrors.value.length &&
+        !passwordErrors.value.length &&
+        !confirmPasswordErrors.value.length
+      ) {
+        try {
+          console.log('Sending data to backend:', {
+            fullname: name.value,
+            email_address: email.value,
+            username: login.value,
+            password: password.value,
+          });
+
+          const response = await axios.post('http://localhost:8000/register', {
+            fullname: name.value,
+            email_address: email.value,
+            username: login.value,
+            password: password.value,
+          });
+
+          console.log('Backend response:', response.data);
+
+          successMessage.value = 'Registration successful!';
+          errorMessage.value = '';
+          console.log('Registration successful:', response.data);
+          router.push('/main-page');
+        } catch (error) {
+          console.error('Registration error:', error);
+          errorMessage.value = 'Failed to register. Please try again.';
+          successMessage.value = '';
+        }
+      } else {
+        console.log('Validation errors:', {
+          nameErrors: nameErrors.value,
+          loginErrors: loginErrors.value,
+          emailErrors: emailErrors.value,
+          passwordErrors: passwordErrors.value,
+          confirmPasswordErrors: confirmPasswordErrors.value,
+        });
+      }
     };
 
     const goBack = () => {
@@ -85,7 +237,15 @@ export default defineComponent({
       login,
       password,
       confirmPassword,
-      onSubmit,
+      errorMessage,
+      successMessage,
+      nameErrors,
+      loginErrors,
+      emailErrors,
+      passwordErrors,
+      confirmPasswordErrors,
+      apiError,
+      handleSubmit,
       goBack,
     };
   },
@@ -99,6 +259,15 @@ export default defineComponent({
   position: relative;
 }
 
+.error {
+  color: red;
+  margin-top: 5px;
+  display: block;
+}
+div {
+  margin-bottom: 20px;
+}
+
 .header {
   position: absolute;
   top: -30px;
@@ -110,7 +279,7 @@ export default defineComponent({
 }
 
 .back-button img {
-  width: 60px; /* Adjust width as needed */
+  width: 60px;
   height: auto;
   margin-left: 35px;
   cursor: pointer;

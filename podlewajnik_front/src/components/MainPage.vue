@@ -56,7 +56,7 @@ import { defineComponent, ref } from 'vue';
 export default defineComponent({
   name: 'MainPage',
   setup() {
-    const mainMessage = ref('Welcome XYZ!');
+    const mainMessage = ref('Welcome XYZ!');  // TODO: Add usage of API response
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const itemName = ref('');
