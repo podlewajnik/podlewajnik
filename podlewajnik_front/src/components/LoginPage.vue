@@ -17,10 +17,11 @@
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input id="passowrd" v-model="password" type="text" required />
+        <input id="passowrd" v-model="password" type="password" required />
       </div>
       <button type="submit">Login</button>
     </form>
+    <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
     </div>
@@ -38,12 +39,40 @@ export default defineComponent({
     const router = useRouter();
     const login = ref('');
     const password = ref('');
+    const errorMessage = ref('');
 
-    const onSubmit = () => {
-      // Handle form submission
+    const onSubmit = async () => {
       console.log('Input 1:', login.value);
       console.log('Input 2:', password.value);
-      // You can add more logic here, e.g., form validation, API calls, etc.
+
+      try {
+        const formData = new FormData();
+        formData.append('username', login.value);
+        formData.append('password', password.value);
+
+        const response = await axios.post(
+          'http://localhost:8000/login',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+
+        console.log('Backend response:', response.data);
+
+        if (response.data.message && response.data.message.includes("Welcome back!")) {
+          console.log('Login successful, redirecting...');
+          // Redirect to the main page after successful login
+          router.push('/main-page');
+        } else {
+          errorMessage.value = response.data.message || 'Login failed. Please try again.';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMessage.value = 'Login failed. Please try again.';
+      }
     };
 
     const goBack = () => {
@@ -53,6 +82,7 @@ export default defineComponent({
     return {
       login,
       password,
+      errorMessage,
       onSubmit,
       goBack,
     };
@@ -155,6 +185,11 @@ button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 5px;
 }
 
 @media (max-width: 900px) {
