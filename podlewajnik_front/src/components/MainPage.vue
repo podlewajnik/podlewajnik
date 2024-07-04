@@ -16,8 +16,10 @@
       <button @click="hideFramedText">Got it!</button>
     </div>
     <button @click="openModal" class="add-button">Add</button>
+    <AddPlantModal :isOpen="isModalOpen" @close="closeModal" @plantAdded="handlePlantAdded" />
+  </div>
 
-    <!-- Modal -->
+    <!-- Modal
     <div v-if="isModalOpen" class="modal">
       <div class="modal-content">
         <span @click="closeModal" class="close">&times;</span>
@@ -43,26 +45,32 @@
           <button type="submit">Add</button>
         </form>
       </div>
-    </div>
+    </div> -->
     <div class="logo-mobile">
       <img src="@/assets/logo.png" alt="Logo" />
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import AddPlantModal from './AddPlantModal.vue';
+
+
 
 export default defineComponent({
   name: 'MainPage',
+  components: {
+    AddPlantModal,
+  },
   setup() {
     const mainMessage = ref('Welcome XYZ!');  // TODO: Add usage of API response
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
-    const itemName = ref('');
-    const itemLocation = ref('');
-    const itemDescription = ref('');
-    const itemWatering = ref('');
+    // const itemName = ref('');
+    // const itemLocation = ref('');
+    // const itemDescription = ref('');
+    // const itemWatering = ref('');
 
     const changeMainMessage = () => {
       if (mainMessage.value === 'Welcome XYZ!') {
@@ -82,36 +90,42 @@ export default defineComponent({
       isModalOpen.value = false;
     };
 
-    const addItem = () => {
-      // Here you can handle adding the item to your data or perform any necessary actions
-      console.log(
-        'Adding item:',
-        itemName.value,
-        itemDescription.value,
-        itemLocation.value,
-        itemWatering.value,
-      );
-      // Optionally, you can reset the form fields and close the modal
-      itemName.value = '';
-      itemDescription.value = '';
-      itemLocation.value = '';
-      itemWatering.value = '';
-      closeModal();
+    const handlePlantAdded = (newPlant: { name: string; location: string; description: string; watering: string }) => {
+      console.log('New plant added:', newPlant);
+
     };
+
+    // const addItem = () => {
+    //   // Here you can handle adding the item to your data or perform any necessary actions
+    //   console.log(
+    //     'Adding item:',
+    //     itemName.value,
+    //     itemDescription.value,
+    //     itemLocation.value,
+    //     itemWatering.value,
+    //   );
+    //   // Optionally, you can reset the form fields and close the modal
+    //   itemName.value = '';
+    //   itemDescription.value = '';
+    //   itemLocation.value = '';
+    //   itemWatering.value = '';
+    //   closeModal();
+    // };
 
     return {
       mainMessage,
       showFramedText,
       isModalOpen,
-      itemName,
-      itemDescription,
-      itemLocation,
-      itemWatering,
+      // itemName,
+      // itemDescription,
+      // itemLocation,
+      // itemWatering,
       changeMainMessage,
       hideFramedText,
       openModal,
       closeModal,
-      addItem,
+      // addItem,
+      handlePlantAdded,
     };
   },
 });
@@ -179,7 +193,7 @@ export default defineComponent({
   cursor: pointer;
 }
 
-.modal {
+/* .modal {
   display: block;
   position: fixed;
   z-index: 1000;
@@ -244,7 +258,7 @@ export default defineComponent({
 
 .modal-content button:hover {
   background-color: #0056b3;
-}
+} */
 
 @media (max-width: 900px) {
   .header .logo {
