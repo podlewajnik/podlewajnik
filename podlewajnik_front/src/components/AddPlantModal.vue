@@ -5,30 +5,33 @@
       <h2>Add a new plant</h2>
       <form @submit.prevent="addPlant">
         <label for="name">Name:</label>
-        <input type="text" id="name" v-model="plantName" required />
+        <input type="text" id="name" v-model="plantName" required minlength="1" maxlength="100" />
 
         <label for="location">Location:</label>
-        <input type="text" id="location" v-model="plantLocation" optional />
+        <input type="text" id="location" v-model="plantLocation" optional maxlength="1000" />
 
         <label for="description">Description:</label>
         <input
           type="text"
           id="description"
           v-model="plantDescription"
-          optional
+          optional maxlength="1000"
         />
 
         <label for="watering">Watering:</label>
-        <input type="text" id="watering" v-model="plantWatering" optional />
+        <input type="text" id="watering" v-model="plantWatering" optional maxlength="1000" />
 
         <button type="submit">Add</button>
       </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue';
+import { defineComponent, ref, PropType, watch } from 'vue';
+import axios from 'axios';
 
 export default defineComponent({
   name: 'AddPlantModal',
@@ -44,20 +47,76 @@ export default defineComponent({
     const plantLocation = ref('');
     const plantDescription = ref('');
     const plantWatering = ref('');
+    const errorMessage = ref('');
+    const successMessage = ref('');
+
+    watch(() => props.isOpen, () => {
+      if (!props.isOpen) {
+        resetForm();
+      }
+    });
+
+
+
+    const resetForm = () => {
+      plantName.value = '';
+      plantLocation.value = '';
+      plantDescription.value = '';
+      plantWatering.value = '';
+      errorMessage.value = '';
+      successMessage.value = '';
+    };
 
     const closeModal = () => {
       emit('close');
+      resetForm(); // Reset form fields and messages when closing modal
     };
 
-    const addPlant = () => {
-      const newPlant = {
+    const addPlant = async () => {
+      try {
+        // Validation for required name
+        if (!plantName.value.trim()) {
+          throw new Error('Name is required');
+        }
+
+        // Validation for maxlength
+        if (plantName.value.length > 100) {
+          throw new Error('Name exceeds maximum length of 100 characters');
+        }
+        if (plantName.value.trim() === ' ') {
+          throw new Error('Name cannot be a single space');
+        }
+
+        if (plantLocation.value.length > 10) {
+          throw new Error('Location exceeds maximum length of 1000 characters');
+        }
+        if (plantDescription.value.length > 10) {
+          throw new Error('Description exceeds maximum length of 1000 characters');
+        }
+        if (plantWatering.value.length > 10) {
+          throw new Error('Watering exceeds maximum length of 1000 characters');
+        }
+       const newPlant = {
         name: plantName.value,
         location: plantLocation.value,
         description: plantDescription.value,
         watering: plantWatering.value,
       };
-      emit('plantAdded', newPlant);
-      closeModal();
+      console.log('Adding plant:', newPlant);
+
+      const response = await axios.post('http://localhost:8000/plants', newPlant);
+      if (response.status === 200) {
+          successMessage.value = 'Item added successfully!';
+          errorMessage.value = '';
+          emit('plantAdded', response.data);
+          closeModal(); // Close modal on successful addition
+        } else {
+          throw new Error('Failed to add item');
+        }
+      } catch (error) {
+        errorMessage.value = error.message || 'Failed to add item. Please try again.';
+        successMessage.value = '';
+      }
     };
 
     return {
@@ -67,6 +126,8 @@ export default defineComponent({
       plantWatering,
       closeModal,
       addPlant,
+      errorMessage,
+      successMessage,
     };
   },
 });
@@ -139,4 +200,14 @@ export default defineComponent({
 .modal-content button:hover {
   background-color: #0056b3;
 } 
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
 </style>
