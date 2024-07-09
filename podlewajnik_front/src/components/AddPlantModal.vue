@@ -204,10 +204,12 @@ export default defineComponent({
 .error-message {
   color: red;
   margin-top: 10px;
+  text-align: center;
 }
 
 .success-message {
   color: green;
   margin-top: 10px;
+  text-align: center;
 }
 </style>
