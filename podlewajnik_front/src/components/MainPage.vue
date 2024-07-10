@@ -57,7 +57,6 @@ interface Plant {
   imageUrl: string;
 }
 
-
 export default defineComponent({
   name: 'MainPage',
   components: {
@@ -65,17 +64,18 @@ export default defineComponent({
     PlantTile,
   },
   setup() {
-    const mainMessage = ref('Welcome XYZ!'); // TODO: Add usage of API response
+    const mainMessage = ref('Welcome!'); // TODO: Add usage of API response
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
+    const userName = ref('');
     const plants = ref<Plant[]>([]);
-    // const token = localStorage.getPlant('authToken');// TODO: add authorisation
+    const authToken = localStorage.getItem('authToken');
 
-    const changeMainMessage = () => {
-      if (mainMessage.value === 'Welcome XYZ!') {
-        mainMessage.value = 'Your Plants Page';
-      }
-    };
+    // const changeMainMessage = () => {
+    //   if (mainMessage.value === 'Welcome XYZ!') {
+    //     mainMessage.value = 'Your Plants Page';
+    //   }
+    // };
 
     const hideFramedText = () => {
       showFramedText.value = false;
@@ -110,11 +110,34 @@ export default defineComponent({
     //     console.error('Error fetching plants:', error);
     //   }
     // };
+    const fetchUserName = async () => {
+      if (authToken) {
+        try {
+          const response = await axios.get('users/whoami', {
+            headers: {
+              Authorization: authToken,
+            },
+          });
+          userName.value = response.data.fullname;
+          mainMessage.value = `Welcome, ${userName.value}!`;
+        } catch (error) {
+          console.error('Error fetching user name:', error);
+        }
+      } else {
+        console.error('No auth token found');
+      }
+    };
 
-    // onMounted(() => {
-    //   // fetchUserName();
-    //   // fetchPlants();
-    // });
+    const changeMainMessage = () => {
+      if (mainMessage.value.startsWith('Welcome')) {
+        mainMessage.value = 'Your Plants Page';
+      }
+    };
+
+    onMounted(() => {
+      fetchUserName();
+      // fetchPlants();
+    });
 
     return {
       mainMessage,
