@@ -41,33 +41,52 @@ export default defineComponent({
     const password = ref('');
     const errorMessage = ref('');
 
-    const onSubmit = async () => {
-      console.log('Input 1:', login.value);
-      console.log('Input 2:', password.value);
+    const getTokenFromCookies = (cookieName: string): string | null => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${cookieName}=`);
 
+      if (parts.length === 2) {
+        const tokenPart = parts.pop();
+
+        return tokenPart?.split(';').shift() || null;
+      }
+      return null;
+    };
+
+    const onSubmit = async () => {
       try {
         const formData = new FormData();
         formData.append('username', login.value);
         formData.append('password', password.value);
 
-        const response = await axios.post(
-          'login',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          }
-        );
+        const response = await axios.post('login', formData, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        });
 
         console.log('Backend response:', response.data);
 
-        if (response.data.message && response.data.message.includes("Welcome back!")) {
+        if (
+          response.data.message &&
+          response.data.message.includes('Welcome back!')
+        ) {
           console.log('Login successful, redirecting...');
-          // Redirect to the main page after successful login
-          router.push('/main-page');
+
+          // Extract token from cookies
+          const token = getTokenFromCookies('Authorization');
+          if (token) {
+            // Store the token in local storage
+            localStorage.setItem('authToken', token);
+
+            router.push('/main-page');
+          } else {
+            errorMessage.value =
+              'Failed to retrieve token from cookies. Please try again.';
+          }
         } else {
-          errorMessage.value = response.data.message || 'Login failed. Please try again.';
+          errorMessage.value =
+            response.data.message || 'Login failed. Please try again.';
         }
       } catch (error) {
         console.error('Login error:', error);
