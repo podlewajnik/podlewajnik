@@ -106,15 +106,15 @@ export default defineComponent({
 
       const response = await axios.post('http://localhost:8000/plants', newPlant);
       if (response.status === 200) {
-          successMessage.value = 'Item added successfully!';
+          successMessage.value = 'Plant added successfully!';
           errorMessage.value = '';
           emit('plantAdded', response.data);
           closeModal(); // Close modal on successful addition
         } else {
-          throw new Error('Failed to add item');
+          throw new Error('Failed to add plant');
         }
       } catch (error) {
-        errorMessage.value = error.message || 'Failed to add item. Please try again.';
+        // errorMessage.value = error.message || TODO!!!!! 'Failed to add plant. Please try again.';
         successMessage.value = '';
       }
     };

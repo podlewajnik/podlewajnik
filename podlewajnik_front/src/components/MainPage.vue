@@ -25,22 +25,51 @@
 
   <div class="logo-mobile">
     <img src="@/assets/logo.png" alt="Logo" />
+
+    <div class="content">
+      <div class="plant-list">
+        <PlantTile
+          v-for="plant in plants"
+          :key="plant.id"
+          :name="plant.name"
+          :description="plant.description"
+          :location="plant.location"
+          :watering="plant.watering"
+          :imageUrl="plant.imageUrl"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
+import axios from 'axios';
 import AddPlantModal from './AddPlantModal.vue';
+import PlantTile from '@/components/PlantTile.vue';
+
+interface Plant {
+  id: number;
+  name: string;
+  description: string;
+  location: string;
+  watering: string;
+  imageUrl: string;
+}
+
 
 export default defineComponent({
   name: 'MainPage',
   components: {
     AddPlantModal,
+    PlantTile,
   },
   setup() {
     const mainMessage = ref('Welcome XYZ!'); // TODO: Add usage of API response
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
+    const plants = ref<Plant[]>([]);
+    // const token = localStorage.getPlant('authToken');// TODO: add authorisation
 
     const changeMainMessage = () => {
       if (mainMessage.value === 'Welcome XYZ!') {
@@ -69,10 +98,29 @@ export default defineComponent({
       console.log('New plant added:', newPlant);
     };
 
+    // const fetchPlants = async () => {
+    //   try {
+    //     const response = await axios.get('http://localhost:8000/plants', {
+    //       headers: {
+    //       //   Authorization: `Bearer ${token}`,
+    //       // },
+    //     });
+    //     plants.value = response.data;
+    //   } catch (error) {
+    //     console.error('Error fetching plants:', error);
+    //   }
+    // };
+
+    // onMounted(() => {
+    //   // fetchUserName();
+    //   // fetchPlants();
+    // });
+
     return {
       mainMessage,
       showFramedText,
       isModalOpen,
+      plants,
       changeMainMessage,
       hideFramedText,
       openModal,
@@ -154,5 +202,30 @@ export default defineComponent({
     display: block;
     margin-top: 20px;
   }
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.tile-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.tile-content {
+  margin-top: 10px;
 }
 </style>
