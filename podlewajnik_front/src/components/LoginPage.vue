@@ -51,7 +51,7 @@ export default defineComponent({
         formData.append('password', password.value);
 
         const response = await axios.post(
-          'http://localhost:8000/login',
+          'login',
           formData,
           {
             headers: {

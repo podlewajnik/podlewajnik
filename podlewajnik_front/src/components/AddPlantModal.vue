@@ -104,7 +104,7 @@ export default defineComponent({
       };
       console.log('Adding plant:', newPlant);
 
-      const response = await axios.post('http://localhost:8000/plants', newPlant);
+      const response = await axios.post('plants', newPlant);
       if (response.status === 200) {
           successMessage.value = 'Plant added successfully!';
           errorMessage.value = '';

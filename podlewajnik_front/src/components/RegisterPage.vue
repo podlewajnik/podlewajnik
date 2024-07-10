@@ -198,7 +198,7 @@ export default defineComponent({
             password: password.value,
           });
 
-          const response = await axios.post('http://localhost:8000/register', {
+          const response = await axios.post('register', {
             fullname: name.value,
             email_address: email.value,
             username: login.value,
