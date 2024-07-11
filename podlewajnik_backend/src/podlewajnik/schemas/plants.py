@@ -4,7 +4,7 @@ from podlewajnik.database.models import Plants
 from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-PlantIn = pydantic_model_creator(Plants, name="PlantIn")
+PlantIn = pydantic_model_creator(Plants, name="PlantIn", exclude=["id"], exclude_readonly=True)
 
 PlantOut = pydantic_model_creator(Plants)
 

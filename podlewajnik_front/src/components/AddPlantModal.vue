@@ -5,26 +5,48 @@
       <h2>Add a new plant</h2>
       <form @submit.prevent="addPlant">
         <label for="name">Name:</label>
-        <input type="text" id="name" v-model="plantName" required minlength="1" maxlength="100" />
+        <input
+          type="text"
+          id="name"
+          v-model="plantName"
+          required
+          minlength="1"
+          maxlength="100"
+        />
 
         <label for="location">Location:</label>
-        <input type="text" id="location" v-model="plantLocation" optional maxlength="1000" />
+        <input
+          type="text"
+          id="location"
+          v-model="plantLocation"
+          optional
+          maxlength="1000"
+        />
 
         <label for="description">Description:</label>
         <input
           type="text"
           id="description"
           v-model="plantDescription"
-          optional maxlength="1000"
+          optional
+          maxlength="1000"
         />
 
         <label for="watering">Watering:</label>
-        <input type="text" id="watering" v-model="plantWatering" optional maxlength="1000" />
+        <input
+          type="text"
+          id="watering"
+          v-model="plantWatering"
+          optional
+          maxlength="1000"
+        />
 
         <button type="submit">Add</button>
       </form>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+      <div v-if="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
     </div>
   </div>
 </template>
@@ -49,14 +71,16 @@ export default defineComponent({
     const plantWatering = ref('');
     const errorMessage = ref('');
     const successMessage = ref('');
+    const authToken = localStorage.getItem('authToken');
 
-    watch(() => props.isOpen, () => {
-      if (!props.isOpen) {
-        resetForm();
-      }
-    });
-
-
+    watch(
+      () => props.isOpen,
+      () => {
+        if (!props.isOpen) {
+          resetForm();
+        }
+      },
+    );
 
     const resetForm = () => {
       plantName.value = '';
@@ -91,21 +115,28 @@ export default defineComponent({
           throw new Error('Location exceeds maximum length of 1000 characters');
         }
         if (plantDescription.value.length > 10) {
-          throw new Error('Description exceeds maximum length of 1000 characters');
+          throw new Error(
+            'Description exceeds maximum length of 1000 characters',
+          );
         }
         if (plantWatering.value.length > 10) {
           throw new Error('Watering exceeds maximum length of 1000 characters');
         }
-       const newPlant = {
-        name: plantName.value,
-        location: plantLocation.value,
-        description: plantDescription.value,
-        watering: plantWatering.value,
-      };
-      console.log('Adding plant:', newPlant);
+        const newPlant = {
+          name: plantName.value,
+          location: plantLocation.value,
+          description: plantDescription.value,
+          watering: plantWatering.value,
+        };
+        console.log('Adding plant:', newPlant);
 
-      const response = await axios.post('plants', newPlant);
-      if (response.status === 200) {
+        const response = await axios.post('plants', newPlant, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        if (response.status === 200) {
           successMessage.value = 'Plant added successfully!';
           errorMessage.value = '';
           emit('plantAdded', response.data);
@@ -199,7 +230,7 @@ export default defineComponent({
 
 .modal-content button:hover {
   background-color: #0056b3;
-} 
+}
 
 .error-message {
   color: red;
