@@ -6,6 +6,7 @@
       </div>
     </div>
     <header class="main-message">
+      <button @click="logout" class="logout-button">Logout</button>
       {{ mainMessage }}
     </header>
     <div class="framed-text" v-if="showFramedText">
@@ -47,6 +48,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 import AddPlantModal from './AddPlantModal.vue';
 import PlantTile from '@/components/PlantTile.vue';
+import { useRouter } from 'vue-router';
 
 interface Plant {
   id: number;
@@ -70,6 +72,7 @@ export default defineComponent({
     const userName = ref('');
     const plants = ref<Plant[]>([]);
     const authToken = localStorage.getItem('authToken');
+    const router = useRouter()
 
     // const changeMainMessage = () => {
     //   if (mainMessage.value === 'Welcome XYZ!') {
@@ -133,6 +136,12 @@ export default defineComponent({
         mainMessage.value = 'Your Plants Page';
       }
     };
+    const logout = () => {
+      localStorage.removeItem('authToken');
+      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"; // Expire the cookie
+      router.push('/login-page'); // Redirect to login page
+    };
+
 
     onMounted(() => {
       fetchUserName();
@@ -149,6 +158,7 @@ export default defineComponent({
       openModal,
       closeModal,
       handlePlantAdded,
+      logout,
     };
   },
 });
