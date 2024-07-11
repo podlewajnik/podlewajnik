@@ -16,7 +16,7 @@
       </p>
       <button @click="hideFramedText">Got it!</button>
     </div>
-    <button @click="openModal" class="add-button">Add</button>
+    <button @click="openModal" class="add-button">Add plant</button>
     <AddPlantModal
       :isOpen="isModalOpen"
       @close="closeModal"
@@ -176,6 +176,10 @@ export default defineComponent({
   position: absolute;
   top: -30px;
   right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    border-bottom: 1px solid #ccc;
 }
 
 .logo img {
@@ -193,6 +197,21 @@ export default defineComponent({
   max-width: 350px;
   height: auto;
   margin-top: 20px;
+}
+
+.logout-button {
+  background-color: #281879;
+  color: rgb(214, 213, 225);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: -15px;
+  margin-right: 20px;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
 }
 
 .main-message {
