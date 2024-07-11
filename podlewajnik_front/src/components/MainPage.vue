@@ -6,6 +6,7 @@
       </div>
     </div>
     <header class="main-message">
+      <button @click="logout" class="logout-button">Logout</button>
       {{ mainMessage }}
     </header>
     <div class="framed-text" v-if="showFramedText">
@@ -16,59 +17,68 @@
       <button @click="hideFramedText">Got it!</button>
     </div>
     <button @click="openModal" class="add-button">Add</button>
+    <AddPlantModal
+      :isOpen="isModalOpen"
+      @close="closeModal"
+      @plantAdded="handlePlantAdded"
+    />
+  </div>
 
-    <!-- Modal -->
-    <div v-if="isModalOpen" class="modal">
-      <div class="modal-content">
-        <span @click="closeModal" class="close">&times;</span>
-        <h2>Add a new plant</h2>
-        <form @submit.prevent="addItem">
-          <label for="name">Name:</label>
-          <input type="text" id="name" v-model="itemName" required />
+  <div class="logo-mobile">
+    <img src="@/assets/logo.png" alt="Logo" />
 
-          <label for="location">Location:</label>
-          <input type="text" id="location" v-model="itemLocation" optional />
-
-          <label for="description">Description:</label>
-          <input
-            type="text"
-            id="description"
-            v-model="itemDescription"
-            optional
-          />
-
-          <label for="watering">Watering:</label>
-          <input type="text" id="watering" v-model="itemWatering" optional />
-
-          <button type="submit">Add</button>
-        </form>
+    <div class="content">
+      <div class="plant-list">
+        <PlantTile
+          v-for="plant in plants"
+          :key="plant.id"
+          :name="plant.name"
+          :description="plant.description"
+          :location="plant.location"
+          :watering="plant.watering"
+          :imageUrl="plant.imageUrl"
+        />
       </div>
-    </div>
-    <div class="logo-mobile">
-      <img src="@/assets/logo.png" alt="Logo" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
+import axios from 'axios';
+import AddPlantModal from './AddPlantModal.vue';
+import PlantTile from '@/components/PlantTile.vue';
+import { useRouter } from 'vue-router';
+
+interface Plant {
+  id: number;
+  name: string;
+  description: string;
+  location: string;
+  watering: string;
+  imageUrl: string;
+}
 
 export default defineComponent({
   name: 'MainPage',
+  components: {
+    AddPlantModal,
+    PlantTile,
+  },
   setup() {
-    const mainMessage = ref('Welcome XYZ!');  // TODO: Add usage of API response
+    const mainMessage = ref('Welcome!'); // TODO: Add usage of API response
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
-    const itemName = ref('');
-    const itemLocation = ref('');
-    const itemDescription = ref('');
-    const itemWatering = ref('');
+    const userName = ref('');
+    const plants = ref<Plant[]>([]);
+    const authToken = localStorage.getItem('authToken');
+    const router = useRouter()
 
-    const changeMainMessage = () => {
-      if (mainMessage.value === 'Welcome XYZ!') {
-        mainMessage.value = 'Your Plants Page';
-      }
-    };
+    // const changeMainMessage = () => {
+    //   if (mainMessage.value === 'Welcome XYZ!') {
+    //     mainMessage.value = 'Your Plants Page';
+    //   }
+    // };
 
     const hideFramedText = () => {
       showFramedText.value = false;
@@ -82,36 +92,73 @@ export default defineComponent({
       isModalOpen.value = false;
     };
 
-    const addItem = () => {
-      // Here you can handle adding the item to your data or perform any necessary actions
-      console.log(
-        'Adding item:',
-        itemName.value,
-        itemDescription.value,
-        itemLocation.value,
-        itemWatering.value,
-      );
-      // Optionally, you can reset the form fields and close the modal
-      itemName.value = '';
-      itemDescription.value = '';
-      itemLocation.value = '';
-      itemWatering.value = '';
-      closeModal();
+    const handlePlantAdded = (newPlant: {
+      name: string;
+      location: string;
+      description: string;
+      watering: string;
+    }) => {
+      console.log('New plant added:', newPlant);
     };
+
+    // const fetchPlants = async () => {
+    //   try {
+    //     const response = await axios.get('http://localhost:8000/plants', {
+    //       headers: {
+    //       //   Authorization: `Bearer ${token}`,
+    //       // },
+    //     });
+    //     plants.value = response.data;
+    //   } catch (error) {
+    //     console.error('Error fetching plants:', error);
+    //   }
+    // };
+    const fetchUserName = async () => {
+      if (authToken) {
+        try {
+          const response = await axios.get('users/whoami', {
+            headers: {
+              Authorization: authToken,
+            },
+          });
+          userName.value = response.data.fullname;
+          mainMessage.value = `Welcome, ${userName.value}!`;
+        } catch (error) {
+          console.error('Error fetching user name:', error);
+        }
+      } else {
+        console.error('No auth token found');
+      }
+    };
+
+    const changeMainMessage = () => {
+      if (mainMessage.value.startsWith('Welcome')) {
+        mainMessage.value = 'Your Plants Page';
+      }
+    };
+    const logout = () => {
+      localStorage.removeItem('authToken');
+      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"; // Expire the cookie
+      router.push('/login-page'); // Redirect to login page
+    };
+
+
+    onMounted(() => {
+      fetchUserName();
+      // fetchPlants();
+    });
 
     return {
       mainMessage,
       showFramedText,
       isModalOpen,
-      itemName,
-      itemDescription,
-      itemLocation,
-      itemWatering,
+      plants,
       changeMainMessage,
       hideFramedText,
       openModal,
       closeModal,
-      addItem,
+      handlePlantAdded,
+      logout,
     };
   },
 });
@@ -179,73 +226,6 @@ export default defineComponent({
   cursor: pointer;
 }
 
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-  background-color: rgb(198, 219, 226);
-  margin: 15% auto;
-  padding: 20px;
-  width: 80%;
-  max-width: 600px;
-  position: relative;
-  border-radius: 8px;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover {
-  color: red;
-}
-
-.modal-content h2 {
-  text-align: center;
-}
-
-.modal-content form {
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-content label {
-  margin-bottom: 5px;
-}
-
-.modal-content input,
-.modal-content textarea,
-.modal-content button {
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.modal-content button {
-  background-color: #48a444;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.modal-content button:hover {
-  background-color: #0056b3;
-}
-
 @media (max-width: 900px) {
   .header .logo {
     display: none;
@@ -255,5 +235,30 @@ export default defineComponent({
     display: block;
     margin-top: 20px;
   }
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.tile-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.tile-content {
+  margin-top: 10px;
 }
 </style>

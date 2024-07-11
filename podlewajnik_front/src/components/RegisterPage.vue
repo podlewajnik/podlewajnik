@@ -171,8 +171,6 @@ export default defineComponent({
     //Submit function:
 
     const handleSubmit = async () => {
-      console.log('handleSubmit called');
-
       // Perform validation
       nameErrors.value = validateName(name.value);
       loginErrors.value = validateLogin(login.value);
@@ -191,21 +189,12 @@ export default defineComponent({
         !confirmPasswordErrors.value.length
       ) {
         try {
-          console.log('Sending data to backend:', {
+          const response = await axios.post('register', {
             fullname: name.value,
             email_address: email.value,
             username: login.value,
             password: password.value,
           });
-
-          const response = await axios.post('http://localhost:8000/register', {
-            fullname: name.value,
-            email_address: email.value,
-            username: login.value,
-            password: password.value,
-          });
-
-          console.log('Backend response:', response.data);
 
           successMessage.value = 'Registration successful!';
           errorMessage.value = '';
