@@ -74,12 +74,6 @@ export default defineComponent({
     const authToken = localStorage.getItem('authToken');
     const router = useRouter()
 
-    // const changeMainMessage = () => {
-    //   if (mainMessage.value === 'Welcome XYZ!') {
-    //     mainMessage.value = 'Your Plants Page';
-    //   }
-    // };
-
     const hideFramedText = () => {
       showFramedText.value = false;
     };
