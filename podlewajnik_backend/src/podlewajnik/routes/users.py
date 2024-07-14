@@ -1,15 +1,12 @@
-from datetime import timedelta
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import timedelta, datetime
+from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from tortoise.contrib.fastapi import HTTPNotFoundError
 
 import podlewajnik.crud.users as crud
 from podlewajnik.auth.users import validate_user
-from podlewajnik.schemas.token import Status
 from podlewajnik.schemas.users import UserIn, UserOut
 
 from podlewajnik.auth.jwthandler import (
@@ -31,13 +28,6 @@ async def create_user(user: UserIn):
 async def login(user: OAuth2PasswordRequestForm = Depends()):
     user = await validate_user(user)
 
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
@@ -48,9 +38,26 @@ async def login(user: OAuth2PasswordRequestForm = Depends()):
     response.set_cookie(
         "Authorization",
         value=f"Bearer {token}",
-        httponly=False,
-        max_age=1800,
-        expires=1800,
+        httponly=True,
+        max_age=3600 * 24 * 7,
+        expires=3600 * 24 * 7,
+        samesite="Lax",
+        secure=False,
+    )
+
+    return response
+
+
+@router.post("/logout")
+async def logout():
+    content = {"message": "You've successfully logged out. See you soon!"}
+    response = JSONResponse(content=content)
+    response.set_cookie(
+        "Authorization",
+        value="",
+        httponly=True,
+        max_age=0,
+        expires=datetime(1970, 1, 1).isoformat(),
         samesite="Lax",
         secure=False,
     )

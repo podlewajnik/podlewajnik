@@ -67,7 +67,6 @@ export default defineComponent({
     const isModalOpen = ref(false);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
-    const authToken = localStorage.getItem('authToken');
     const router = useRouter();
 
     const hideFramedText = () => {
@@ -93,11 +92,7 @@ export default defineComponent({
 
     const fetchPlants = async () => {
       try {
-        const response = await axios.get('plants', {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+        const response = await axios.get('plants');
         console.log('Fetched plants:', response.data);
 
         plants.value = response.data.map((plant: any) => ({
@@ -111,21 +106,14 @@ export default defineComponent({
     };
 
     const fetchUserName = async () => {
-      if (authToken) {
         try {
-          const response = await axios.get('users/whoami', {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
+          const response = await axios.get('users/whoami');
           userName.value = response.data.fullname;
           mainMessage.value = `Welcome, ${userName.value}!`;
         } catch (error) {
           console.error('Error fetching user name:', error);
         }
-      } else {
-        console.error('No auth token found');
-      }
+
     };
 
     const changeMainMessage = () => {
@@ -134,9 +122,8 @@ export default defineComponent({
       }
     };
 
-    const logout = () => {
-      localStorage.removeItem('authToken');
-      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+    const logout = async () => {
+      await axios.post('logout');
       router.push('/login-page');
     };
 
@@ -260,5 +247,3 @@ export default defineComponent({
   padding: 20px;
 }
 </style>
-
-

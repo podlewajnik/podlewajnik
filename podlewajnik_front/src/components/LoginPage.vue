@@ -72,18 +72,7 @@ export default defineComponent({
           response.data.message.includes('Welcome back!')
         ) {
           console.log('Login successful, redirecting...');
-
-          // Extract token from cookies
-          const token = getTokenFromCookies('Authorization');
-          if (token) {
-            // Store the token in local storage
-            localStorage.setItem('authToken', token);
-
-            router.push('/main-page');
-          } else {
-            errorMessage.value =
-              'Failed to retrieve token from cookies. Please try again.';
-          }
+          router.push('/main-page');
         } else {
           errorMessage.value =
             response.data.message || 'Login failed. Please try again.';
