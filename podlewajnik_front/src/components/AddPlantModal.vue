@@ -71,7 +71,6 @@ export default defineComponent({
     const plantWatering = ref('');
     const errorMessage = ref('');
     const successMessage = ref('');
-    const authToken = localStorage.getItem('authToken');
 
     watch(
       () => props.isOpen,
@@ -130,11 +129,7 @@ export default defineComponent({
         };
         console.log('Adding plant:', newPlant);
 
-        const response = await axios.post('plants', newPlant, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+        const response = await axios.post('plants', newPlant);
 
         if (response.status === 200) {
           successMessage.value = 'Plant added successfully!';
