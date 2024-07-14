@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -19,22 +19,12 @@ from podlewajnik.auth.jwthandler import (
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserOut)
-async def create_user(user: UserIn):
-    return await crud.create_user(user)
-
-
-@router.post("/login")
-async def login(user: OAuth2PasswordRequestForm = Depends()):
-    user = await validate_user(user)
-
+def _set_response_access_token(user, response):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     token = jsonable_encoder(access_token)
-    content = {"message": "You've successfully logged in. Welcome back!"}
-    response = JSONResponse(content=content)
     response.set_cookie(
         "Authorization",
         value=f"Bearer {token}",
@@ -44,6 +34,24 @@ async def login(user: OAuth2PasswordRequestForm = Depends()):
         samesite="Lax",
         secure=False,
     )
+    return response
+
+
+@router.post("/register", response_model=UserOut)
+async def create_user(response: Response, user: UserIn):
+    user = await crud.create_user(user)
+    _set_response_access_token(user, response)
+
+    return user
+
+
+@router.post("/login")
+async def login(user: OAuth2PasswordRequestForm = Depends()):
+    user = await validate_user(user)
+
+    content = {"message": "You've successfully logged in. Welcome back!"}
+    response = JSONResponse(content=content)
+    _set_response_access_token(user, response)
 
     return response
 

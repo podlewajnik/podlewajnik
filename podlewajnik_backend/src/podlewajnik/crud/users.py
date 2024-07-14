@@ -15,6 +15,6 @@ async def create_user(user) -> UserOut:
     try:
         user_obj = await Users.create(**user.dict(exclude_unset=True))
     except IntegrityError:
-        raise HTTPException(status_code=401, detail="Username already taken.")
+        raise HTTPException(status_code=409, detail="Username already taken.")
 
     return await UserOut.from_tortoise_orm(user_obj)
