@@ -19,3 +19,4 @@ class Plants(models.Model):
     watering = fields.TextField()
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
+    owner = fields.ForeignKeyField("models.Users", related_name="plant")

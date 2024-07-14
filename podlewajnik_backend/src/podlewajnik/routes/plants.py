@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+from podlewajnik.schemas.users import UserOut
 from tortoise.contrib.fastapi import HTTPNotFoundError
 from tortoise.exceptions import DoesNotExist
 
@@ -18,8 +19,8 @@ router = APIRouter()
     response_model=List[PlantOut],
     dependencies=[Depends(get_current_user)],
 )
-async def get_plants():
-    return await crud.get_plants()
+async def get_plants(current_user: UserOut = Depends(get_current_user)):
+    return await crud.get_plants(current_user)
 
 
 @router.get(
@@ -27,9 +28,9 @@ async def get_plants():
     response_model=PlantOut,
     dependencies=[Depends(get_current_user)],
 )
-async def get_plant(note_id: int):
+async def get_plant(note_id: int, current_user: UserOut = Depends(get_current_user)):
     try:
-        return await crud.get_plant(note_id)
+        return await crud.get_plant(note_id, current_user)
     except DoesNotExist:
         raise HTTPException(
             status_code=404,
@@ -41,7 +42,7 @@ async def get_plant(note_id: int):
     "/plants", response_model=PlantOut, dependencies=[Depends(get_current_user)]
 )
 async def create_plant(plant: PlantIn, current_user=Depends(get_current_user)):
-    return await crud.create_plant(plant)
+    return await crud.create_plant(plant, current_user)
 
 
 @router.patch(
