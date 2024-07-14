@@ -66,7 +66,7 @@ export default defineComponent({
     PlantTile,
   },
   setup() {
-    const mainMessage = ref('Welcome!'); // TODO: Add usage of API response
+    const mainMessage = ref('Welcome!'); 
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const userName = ref('');
@@ -95,18 +95,25 @@ export default defineComponent({
       console.log('New plant added:', newPlant);
     };
 
-    // const fetchPlants = async () => {
-    //   try {
-    //     const response = await axios.get('http://localhost:8000/plants', {
-    //       headers: {
-    //       //   Authorization: `Bearer ${token}`,
-    //       // },
-    //     });
-    //     plants.value = response.data;
-    //   } catch (error) {
-    //     console.error('Error fetching plants:', error);
-    //   }
-    // };
+    const fetchPlants = async () => {
+      try {
+        const response = await axios.get('plants', {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        console.log('Fetched plants:', response.data);
+        
+        // Assign the response data directly to plants
+        plants.value = response.data.map((plant: any) => ({
+          ...plant,
+          imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
+        }));
+      } catch (error) {
+        console.error('Error fetching plants:', error);
+      }
+    };
+    
     const fetchUserName = async () => {
       if (authToken) {
         try {
@@ -139,7 +146,7 @@ export default defineComponent({
 
     onMounted(() => {
       fetchUserName();
-      // fetchPlants();
+      fetchPlants();
     });
 
     return {
