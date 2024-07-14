@@ -40,7 +40,6 @@
       },
     },
     setup(props) {
-    //   const placeholderImage = require('@/assets/placeholder.png'); // Ensure this path is correct
       const imageSrc = computed(() => props.imageUrl || placeholderImage);
   
       return {
@@ -56,18 +55,25 @@
     flex-direction: column;
     padding: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 10px; /* Add some margin between tiles */
+    border-radius: 15px;
+    margin: 10px;
+    background-color: #79c2d0;
+    border-color: #a0a0a0;
   }
   
   .tile-image {
-    width: 100%;
+    width: 30%; /* Adjust this to make the image smaller */
     height: auto;
     border-radius: 5px;
+    object-fit: cover;
+    
+    
   }
+  
   
   .tile-content {
     margin-top: 10px;
+    
   }
   </style>
   

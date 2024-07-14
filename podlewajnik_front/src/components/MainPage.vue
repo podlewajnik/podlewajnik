@@ -22,10 +22,6 @@
       @close="closeModal"
       @plantAdded="handlePlantAdded"
     />
-  </div>
-
-  <div class="logo-mobile">
-    <img src="@/assets/logo.png" alt="Logo" />
 
     <div class="content">
       <div class="plant-list">
@@ -66,13 +62,13 @@ export default defineComponent({
     PlantTile,
   },
   setup() {
-    const mainMessage = ref('Welcome!'); 
+    const mainMessage = ref('Welcome!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
     const authToken = localStorage.getItem('authToken');
-    const router = useRouter()
+    const router = useRouter();
 
     const hideFramedText = () => {
       showFramedText.value = false;
@@ -103,23 +99,23 @@ export default defineComponent({
           },
         });
         console.log('Fetched plants:', response.data);
-        
-        // Assign the response data directly to plants
+
         plants.value = response.data.map((plant: any) => ({
           ...plant,
           imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
         }));
+
       } catch (error) {
         console.error('Error fetching plants:', error);
       }
     };
-    
+
     const fetchUserName = async () => {
       if (authToken) {
         try {
           const response = await axios.get('users/whoami', {
             headers: {
-              Authorization: authToken,
+              Authorization: `Bearer ${authToken}`,
             },
           });
           userName.value = response.data.fullname;
@@ -137,12 +133,12 @@ export default defineComponent({
         mainMessage.value = 'Your Plants Page';
       }
     };
+
     const logout = () => {
       localStorage.removeItem('authToken');
-      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"; // Expire the cookie
-      router.push('/login-page'); // Redirect to login page
+      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+      router.push('/login-page');
     };
-
 
     onMounted(() => {
       fetchUserName();
@@ -257,28 +253,12 @@ export default defineComponent({
   }
 }
 
-.tiles {
+.plant-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
 }
-
-.tile {
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.tile-image {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-
-.tile-content {
-  margin-top: 10px;
-}
 </style>
+
+
