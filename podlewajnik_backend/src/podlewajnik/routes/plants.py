@@ -41,7 +41,7 @@ async def get_plant(note_id: int):
     "/plants", response_model=PlantOut, dependencies=[Depends(get_current_user)]
 )
 async def create_plant(plant: PlantIn, current_user=Depends(get_current_user)):
-    return await crud.create_plant()(plant, current_user)
+    return await crud.create_plant(plant)
 
 
 @router.patch(

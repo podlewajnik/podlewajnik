@@ -16,16 +16,12 @@
       </p>
       <button @click="hideFramedText">Got it!</button>
     </div>
-    <button @click="openModal" class="add-button">Add</button>
+    <button @click="openModal" class="add-button">Add plant</button>
     <AddPlantModal
       :isOpen="isModalOpen"
       @close="closeModal"
       @plantAdded="handlePlantAdded"
     />
-  </div>
-
-  <div class="logo-mobile">
-    <img src="@/assets/logo.png" alt="Logo" />
 
     <div class="content">
       <div class="plant-list">
@@ -66,19 +62,13 @@ export default defineComponent({
     PlantTile,
   },
   setup() {
-    const mainMessage = ref('Welcome!'); // TODO: Add usage of API response
+    const mainMessage = ref('Welcome!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
     const authToken = localStorage.getItem('authToken');
-    const router = useRouter()
-
-    // const changeMainMessage = () => {
-    //   if (mainMessage.value === 'Welcome XYZ!') {
-    //     mainMessage.value = 'Your Plants Page';
-    //   }
-    // };
+    const router = useRouter();
 
     const hideFramedText = () => {
       showFramedText.value = false;
@@ -101,24 +91,31 @@ export default defineComponent({
       console.log('New plant added:', newPlant);
     };
 
-    // const fetchPlants = async () => {
-    //   try {
-    //     const response = await axios.get('http://localhost:8000/plants', {
-    //       headers: {
-    //       //   Authorization: `Bearer ${token}`,
-    //       // },
-    //     });
-    //     plants.value = response.data;
-    //   } catch (error) {
-    //     console.error('Error fetching plants:', error);
-    //   }
-    // };
+    const fetchPlants = async () => {
+      try {
+        const response = await axios.get('plants', {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        console.log('Fetched plants:', response.data);
+
+        plants.value = response.data.map((plant: any) => ({
+          ...plant,
+          imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
+        }));
+
+      } catch (error) {
+        console.error('Error fetching plants:', error);
+      }
+    };
+
     const fetchUserName = async () => {
       if (authToken) {
         try {
           const response = await axios.get('users/whoami', {
             headers: {
-              Authorization: authToken,
+              Authorization: `Bearer ${authToken}`,
             },
           });
           userName.value = response.data.fullname;
@@ -136,16 +133,16 @@ export default defineComponent({
         mainMessage.value = 'Your Plants Page';
       }
     };
+
     const logout = () => {
       localStorage.removeItem('authToken');
-      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"; // Expire the cookie
-      router.push('/login-page'); // Redirect to login page
+      document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+      router.push('/login-page');
     };
-
 
     onMounted(() => {
       fetchUserName();
-      // fetchPlants();
+      fetchPlants();
     });
 
     return {
@@ -176,6 +173,10 @@ export default defineComponent({
   position: absolute;
   top: -30px;
   right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    border-bottom: 1px solid #ccc;
 }
 
 .logo img {
@@ -193,6 +194,21 @@ export default defineComponent({
   max-width: 350px;
   height: auto;
   margin-top: 20px;
+}
+
+.logout-button {
+  background-color: #281879;
+  color: rgb(214, 213, 225);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: -15px;
+  margin-right: 20px;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
 }
 
 .main-message {
@@ -237,28 +253,12 @@ export default defineComponent({
   }
 }
 
-.tiles {
+.plant-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
 }
-
-.tile {
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.tile-image {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-
-.tile-content {
-  margin-top: 10px;
-}
 </style>
+
+
