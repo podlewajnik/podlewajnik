@@ -24,7 +24,7 @@
     />
 
     <div class="content">
-      <div class="plant-list">
+      <div class="tiles">
         <PlantTile
           v-for="plant in plants"
           :key="plant.id"
@@ -240,10 +240,19 @@ export default defineComponent({
   }
 }
 
-.plant-list {
+.tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(2, 1fr); /* Two columns layout */
+  gap: 15px;
+  padding: 150px;
+  justify-items: center; /* Center the items horizontally */
+}
+
+
+@media (max-width: 900px) {
+  .tiles {
+    grid-template-columns: 1fr; /* Single column layout for mobile */
+  }
 }
 </style>
+
