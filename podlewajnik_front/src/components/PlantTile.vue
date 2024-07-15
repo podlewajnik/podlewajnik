@@ -102,4 +102,8 @@ export default defineComponent({
 .tile-section strong {
   font-weight: bold;
 }
+
+h3 {
+  text-align: center;
+}
 </style>
