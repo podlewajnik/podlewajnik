@@ -199,7 +199,8 @@ export default defineComponent({
 }
 
 .main-message {
-  background-color: lightblue;
+  background-color:  #84d1cb;
+  ;
   padding: 10px;
   font-size: 25px;
   cursor: pointer;
