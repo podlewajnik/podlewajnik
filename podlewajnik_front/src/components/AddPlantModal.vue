@@ -19,7 +19,6 @@
           type="text"
           id="location"
           v-model="plantLocation"
-          optional
           maxlength="1000"
         />
 
@@ -28,7 +27,6 @@
           type="text"
           id="description"
           v-model="plantDescription"
-          optional
           maxlength="1000"
         />
 
@@ -37,7 +35,6 @@
           type="text"
           id="watering"
           v-model="plantWatering"
-          optional
           maxlength="1000"
         />
 
@@ -50,7 +47,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from 'vue';
 import axios from 'axios';
@@ -92,42 +88,25 @@ export default defineComponent({
 
     const closeModal = () => {
       emit('close');
-      resetForm(); // Reset form fields and messages when closing modal
+      resetForm();
     };
 
     const addPlant = async () => {
       try {
-        // Validation for required name
         if (!plantName.value.trim()) {
           throw new Error('Name is required');
         }
 
-        // Validation for maxlength
-        if (plantName.value.length > 100) {
-          throw new Error('Name exceeds maximum length of 100 characters');
-        }
-        if (plantName.value.trim() === ' ') {
-          throw new Error('Name cannot be a single space');
+        if (plantName.value.length > 40) {
+          throw new Error('Name exceeds maximum length of 40 characters');
         }
 
-        if (plantLocation.value.length > 10) {
-          throw new Error('Location exceeds maximum length of 1000 characters');
-        }
-        if (plantDescription.value.length > 10) {
-          throw new Error(
-            'Description exceeds maximum length of 1000 characters',
-          );
-        }
-        if (plantWatering.value.length > 10) {
-          throw new Error('Watering exceeds maximum length of 1000 characters');
-        }
         const newPlant = {
           name: plantName.value,
           location: plantLocation.value,
           description: plantDescription.value,
           watering: plantWatering.value,
         };
-        console.log('Adding plant:', newPlant);
 
         const response = await axios.post('plants', newPlant);
 
@@ -135,12 +114,13 @@ export default defineComponent({
           successMessage.value = 'Plant added successfully!';
           errorMessage.value = '';
           emit('plantAdded', response.data);
-          closeModal(); // Close modal on successful addition
+          closeModal();
         } else {
           throw new Error('Failed to add plant');
         }
       } catch (error) {
-        // errorMessage.value = error.message || TODO!!!!! 'Failed to add plant. Please try again.';
+        errorMessage.value =
+          (error as Error).message || 'Failed to add plant. Please try again.';
         successMessage.value = '';
       }
     };
@@ -158,7 +138,6 @@ export default defineComponent({
   },
 });
 </script>
-
 <style scoped>
 .modal {
   display: block;

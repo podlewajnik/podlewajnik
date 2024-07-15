@@ -1,14 +1,17 @@
 <template>
   <div class="tile">
-    <img :src="imageSrc" alt="Item Image" class="tile-image" />
+    <div class="image-container">
+      <img :src="imageSrc" alt="Item Image" class="tile-image" />
+    </div>
     <div class="tile-content">
       <h3>{{ name }}</h3>
-      <p>{{ description }}</p>
-      <p><strong>Location:</strong> {{ location }}</p>
-      <p><strong>Watering:</strong> {{ watering }}</p>
+      <p class="tile-section"><strong>Location:</strong> {{ location }}</p>
+      <p class="tile-section"><strong>Description:</strong> {{ description }}</p>
+      <p class="tile-section"><strong>Watering:</strong> {{ watering }}</p>
     </div>
   </div>
 </template>
+
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
@@ -68,21 +71,35 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   height: 200px; /* Adjust height as needed */
-  background-color: #fff; /* Optional: background color for the image container */
+ 
   border-radius: 5px;
   overflow: hidden;
 }
 
 .tile-image {
-  margin: auto;
-  max-width: 50%;
+  max-width: 100%;
   max-height: 100%;
   object-fit: cover; /* Ensure image covers the area without stretching */
 }
 
 .tile-content {
   margin-top: 10px;
-  text-align: left; /* Center the text content */
-  flex-grow: 1; /* Ensure content area grows to fill available space */
+  text-align: left;
+  flex-grow: 1;
+}
+
+.tile-section {
+  margin-top: 8px; /* Adjust spacing between sections */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* Limit to 2 lines */
+  line-height: 1.5em; /* Line height for text */
+  max-height: 3em; /* 2 lines * 1.5em */
+}
+
+.tile-section strong {
+  font-weight: bold;
 }
 </style>
