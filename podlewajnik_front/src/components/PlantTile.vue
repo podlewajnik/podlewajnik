@@ -5,8 +5,9 @@
     </div>
     <div class="tile-content">
       <h3>{{ name }}</h3>
-      <p class="tile-section"><strong>Location:</strong> {{ location }}</p>
-      <p class="tile-section"><strong>Description:</strong> {{ description }}</p>
+       <p class="tile-section"><strong>Description:</strong> {{ description }}</p>
+       <p class="tile-section"><strong>Location:</strong> {{ location }}</p>
+     
       <p class="tile-section"><strong>Watering:</strong> {{ watering }}</p>
     </div>
   </div>

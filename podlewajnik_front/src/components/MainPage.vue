@@ -33,9 +33,16 @@
           :location="plant.location"
           :watering="plant.watering"
           :imageUrl="plant.imageUrl"
+          @click="openPlantModal(plant)"
         />
       </div>
     </div>
+    <PlantModal
+      :isOpen="isPlantModalOpen"
+      :plant="selectedPlant"
+      @close="closePlantModal"
+      @edit="editPlant"
+    />
   </div>
 </template>
 
@@ -44,7 +51,9 @@ import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 import AddPlantModal from './AddPlantModal.vue';
 import PlantTile from '@/components/PlantTile.vue';
+import PlantModal from '@/components/PlantModal.vue';
 import { useRouter } from 'vue-router';
+
 
 interface Plant {
   id: number;
@@ -60,11 +69,14 @@ export default defineComponent({
   components: {
     AddPlantModal,
     PlantTile,
+    PlantModal,
   },
   setup() {
     const mainMessage = ref('Welcome!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
+    const isPlantModalOpen = ref(false);
+    const selectedPlant = ref<Plant | null>(null);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
     const router = useRouter();
@@ -79,6 +91,21 @@ export default defineComponent({
 
     const closeModal = () => {
       isModalOpen.value = false;
+    };
+
+
+    const openPlantModal = (plant: Plant) => {
+      selectedPlant.value = plant;
+      isPlantModalOpen.value = true;
+    };
+
+    const closePlantModal = () => {
+  isPlantModalOpen.value = false;
+  selectedPlant.value = null;
+};
+
+    const editPlant = (plant: Plant) => {
+      console.log('Edit plant:', plant);
     };
 
     const handlePlantAdded = (newPlant: {
@@ -136,12 +163,17 @@ export default defineComponent({
       mainMessage,
       showFramedText,
       isModalOpen,
+      isPlantModalOpen,
+      selectedPlant,
       plants,
       changeMainMessage,
       hideFramedText,
       openModal,
       closeModal,
+      openPlantModal,
+      closePlantModal,
       handlePlantAdded,
+      editPlant,
       logout,
     };
   },
@@ -184,7 +216,7 @@ export default defineComponent({
 }
 
 .logout-button {
-  background-color: #281879;
+  background-color: #0d3828;
   color: rgb(214, 213, 225);
   border: none;
   padding: 10px 20px;
@@ -195,7 +227,7 @@ export default defineComponent({
 }
 
 .logout-button:hover {
-  background-color: #d32f2f;
+  background-color: #2e47ab;
 }
 
 .main-message {
@@ -247,6 +279,7 @@ export default defineComponent({
   gap: 15px;
   padding: 150px;
   justify-items: center; /* Center the items horizontally */
+  cursor: pointer;
 }
 
 
