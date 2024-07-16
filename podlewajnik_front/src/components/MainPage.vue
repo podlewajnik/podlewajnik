@@ -41,7 +41,13 @@
       :isOpen="isPlantModalOpen"
       :plant="selectedPlant"
       @close="closePlantModal"
-      @edit="editPlant"
+      @edit="openEditModal"
+    />
+    <EditPlantModal
+      :isOpen="isEditModalOpen"
+      :plant="selectedPlant"
+      @close="closeEditModal"
+      @save="savePlant"
     />
   </div>
 </template>
@@ -52,17 +58,9 @@ import axios from 'axios';
 import AddPlantModal from './AddPlantModal.vue';
 import PlantTile from '@/components/PlantTile.vue';
 import PlantModal from '@/components/PlantModal.vue';
+import EditPlantModal from '@/components/EditPlantModal.vue';
 import { useRouter } from 'vue-router';
-
-
-interface Plant {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  watering: string;
-  imageUrl: string;
-}
+import { Plant } from '@/interfaces/Plant';
 
 export default defineComponent({
   name: 'MainPage',
@@ -70,12 +68,14 @@ export default defineComponent({
     AddPlantModal,
     PlantTile,
     PlantModal,
+    EditPlantModal,
   },
   setup() {
     const mainMessage = ref('Welcome!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const isPlantModalOpen = ref(false);
+    const isEditModalOpen = ref(false);
     const selectedPlant = ref<Plant | null>(null);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
@@ -93,19 +93,36 @@ export default defineComponent({
       isModalOpen.value = false;
     };
 
-
     const openPlantModal = (plant: Plant) => {
       selectedPlant.value = plant;
       isPlantModalOpen.value = true;
     };
 
     const closePlantModal = () => {
-  isPlantModalOpen.value = false;
-  selectedPlant.value = null;
-};
+      isPlantModalOpen.value = false;
+    };
 
-    const editPlant = (plant: Plant) => {
-      console.log('Edit plant:', plant);
+    const openEditModal = (plant: Plant) => {
+      selectedPlant.value = plant;
+      isEditModalOpen.value = true;
+    };
+
+    const closeEditModal = () => {
+      isEditModalOpen.value = false;
+    };
+
+    
+    const savePlant = async (updatedPlant: Plant) => {
+      try {
+        await axios.put(`plants/${updatedPlant.id}`, updatedPlant);
+        const index = plants.value.findIndex((p: Plant) => p.id === updatedPlant.id);
+        if (index !== -1) {
+          plants.value[index] = updatedPlant;
+        }
+      } catch (error) {
+        console.error('Error saving plant:', error);
+      }
+      closeEditModal();
     };
 
     const handlePlantAdded = (newPlant: {
@@ -120,27 +137,23 @@ export default defineComponent({
     const fetchPlants = async () => {
       try {
         const response = await axios.get('plants');
-        console.log('Fetched plants:', response.data);
-
         plants.value = response.data.map((plant: any) => ({
           ...plant,
           imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
         }));
-
       } catch (error) {
         console.error('Error fetching plants:', error);
       }
     };
 
     const fetchUserName = async () => {
-        try {
-          const response = await axios.get('users/whoami');
-          userName.value = response.data.fullname;
-          mainMessage.value = `Welcome, ${userName.value}!`;
-        } catch (error) {
-          console.error('Error fetching user name:', error);
-        }
-
+      try {
+        const response = await axios.get('users/whoami');
+        userName.value = response.data.fullname;
+        mainMessage.value = `Welcome, ${userName.value}!`;
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
     };
 
     const changeMainMessage = () => {
@@ -164,6 +177,7 @@ export default defineComponent({
       showFramedText,
       isModalOpen,
       isPlantModalOpen,
+      isEditModalOpen,
       selectedPlant,
       plants,
       changeMainMessage,
@@ -172,13 +186,18 @@ export default defineComponent({
       closeModal,
       openPlantModal,
       closePlantModal,
+      openEditModal,
+      closeEditModal,
+      savePlant,
       handlePlantAdded,
-      editPlant,
       logout,
     };
   },
 });
 </script>
+
+
+
 
 <style scoped>
 .main-page {

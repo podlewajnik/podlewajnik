@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Plant } from '@/interfaces/Plant';
+import { Plant } from '../interfaces/Plant';
 import placeholderImage from '@/assets/placeholder.png';
 
 export default defineComponent({
