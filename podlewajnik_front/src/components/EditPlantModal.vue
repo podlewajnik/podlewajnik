@@ -16,8 +16,7 @@
           <label for="watering">Watering</label>
           <input v-model="editedPlant.watering" type="text" id="watering" />
   
-          <label for="imageUrl">Image URL</label>
-          <input v-model="editedPlant.imageUrl" type="text" id="imageUrl" />
+        
   
           <div class="buttons">
             <button type="submit">Save</button>
