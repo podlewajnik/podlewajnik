@@ -122,19 +122,20 @@ export default defineComponent({
       }
       closeEditModal();
     };
-    
+
     const savePlant = async (updatedPlant: Plant) => {
-      try {
-        await axios.put(`plants/${updatedPlant.id}`, updatedPlant);
-        const index = plants.value.findIndex((p: Plant) => p.id === updatedPlant.id);
-        if (index !== -1) {
-          plants.value[index] = updatedPlant;
-        }
-      } catch (error) {
-        console.error('Error saving plant:', error);
-      }
-      closeEditModal();
-    };
+  try {
+    await axios.patch(`http://localhost:8000/plant/${updatedPlant.id}`, {
+      title: updatedPlant.name,
+      content: updatedPlant.description,
+      // Include other fields as needed
+    });
+    // Update plants array or perform other actions upon successful update
+  } catch (error) {
+    console.error('Error saving plant:', error);
+  }
+  closeEditModal();
+};
 
     const handlePlantAdded = (newPlant: {
       name: string;
