@@ -60,7 +60,7 @@ import PlantTile from '@/components/PlantTile.vue';
 import PlantModal from '@/components/PlantModal.vue';
 import EditPlantModal from '@/components/EditPlantModal.vue';
 import { useRouter } from 'vue-router';
-import { Plant } from '@/interfaces/Plant';
+import { Plant } from '../interfaces/Plant';
 
 export default defineComponent({
   name: 'MainPage',
@@ -102,8 +102,7 @@ export default defineComponent({
       isPlantModalOpen.value = false;
     };
 
-    const openEditModal = (plant: Plant) => {
-      selectedPlant.value = plant;
+    const openEditModal = () => {
       isEditModalOpen.value = true;
     };
 
@@ -111,6 +110,18 @@ export default defineComponent({
       isEditModalOpen.value = false;
     };
 
+    const editPlant = (plant: Plant) => {
+      selectedPlant.value = plant;
+      openEditModal();
+    };
+
+    const handlePlantUpdated = (updatedPlant: Plant) => {
+      const index = plants.value.findIndex((plant) => plant.id === updatedPlant.id);
+      if (index !== -1) {
+        plants.value[index] = updatedPlant;
+      }
+      closeEditModal();
+    };
     
     const savePlant = async (updatedPlant: Plant) => {
       try {
@@ -190,6 +201,8 @@ export default defineComponent({
       closeEditModal,
       savePlant,
       handlePlantAdded,
+      editPlant,
+      handlePlantUpdated,
       logout,
     };
   },
