@@ -11,8 +11,7 @@
     </header>
     <div class="framed-text" v-if="showFramedText">
       <p>
-        Add some plants and details about them. If you want to get a
-        notification about watering, add your email and date of
+        Add some plants and details about them. If you want to start click on "Add plant" button
       </p>
       <button @click="hideFramedText">Got it!</button>
     </div>
@@ -41,7 +40,13 @@
       :isOpen="isPlantModalOpen"
       :plant="selectedPlant"
       @close="closePlantModal"
-      @edit="editPlant"
+      @edit="openEditModal"
+    />
+    <EditPlantModal
+      :isOpen="isEditModalOpen"
+      :plant="selectedPlant"
+      @close="closeEditModal"
+      @save="savePlant"
     />
   </div>
 </template>
@@ -52,17 +57,9 @@ import axios from 'axios';
 import AddPlantModal from './AddPlantModal.vue';
 import PlantTile from '@/components/PlantTile.vue';
 import PlantModal from '@/components/PlantModal.vue';
+import EditPlantModal from '@/components/EditPlantModal.vue';
 import { useRouter } from 'vue-router';
-
-
-interface Plant {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  watering: string;
-  imageUrl: string;
-}
+import { Plant } from '../interfaces/Plant';
 
 export default defineComponent({
   name: 'MainPage',
@@ -70,12 +67,14 @@ export default defineComponent({
     AddPlantModal,
     PlantTile,
     PlantModal,
+    EditPlantModal,
   },
   setup() {
     const mainMessage = ref('Welcome!');
     const showFramedText = ref(true);
     const isModalOpen = ref(false);
     const isPlantModalOpen = ref(false);
+    const isEditModalOpen = ref(false);
     const selectedPlant = ref<Plant | null>(null);
     const userName = ref('');
     const plants = ref<Plant[]>([]);
@@ -83,6 +82,7 @@ export default defineComponent({
 
     const hideFramedText = () => {
       showFramedText.value = false;
+      localStorage.setItem('hideFramedText', 'true'); //needs changes, still visible after log in agin.  
     };
 
     const openModal = () => {
@@ -93,54 +93,87 @@ export default defineComponent({
       isModalOpen.value = false;
     };
 
-
     const openPlantModal = (plant: Plant) => {
       selectedPlant.value = plant;
       isPlantModalOpen.value = true;
     };
 
     const closePlantModal = () => {
-  isPlantModalOpen.value = false;
-  selectedPlant.value = null;
-};
-
-    const editPlant = (plant: Plant) => {
-      console.log('Edit plant:', plant);
+      isPlantModalOpen.value = false;
     };
 
-    const handlePlantAdded = (newPlant: {
-      name: string;
-      location: string;
-      description: string;
-      watering: string;
-    }) => {
-      console.log('New plant added:', newPlant);
+    const openEditModal = () => {
+      isEditModalOpen.value = true;
+    };
+
+    const closeEditModal = () => {
+      isEditModalOpen.value = false;
+    };
+
+    const editPlant = (plant: Plant) => {
+      selectedPlant.value = plant;
+      openEditModal();
+    };
+
+    const handlePlantUpdated = (updatedPlant: Plant) => {
+      const index = plants.value.findIndex(
+        (plant) => plant.id === updatedPlant.id,
+      );
+      if (index !== -1) {
+        plants.value[index] = updatedPlant;
+      }
+      closeEditModal();
+    };
+
+    const savePlant = async (updatedPlant: Plant) => {
+      try {
+        await axios.patch(`http://localhost:8000/plant/${updatedPlant.id}`, {
+          title: updatedPlant.name,
+          content: updatedPlant.description,
+          // Include other fields as needed
+        });
+        // Update plants array or perform other actions upon successful update
+      } catch (error) {
+        console.error('Error saving plant:', error);
+      }
+      closeEditModal();
+    };
+
+    const handlePlantAdded = (newPlant: Plant) => {
+      plants.value.push(newPlant); 
+      closeModal();
+    };
+
+    const handlePlantDeleted = async (plant: Plant) => {
+      try {
+        await axios.delete(`http://localhost:8000/plant/${plant.id}`);
+        plants.value = plants.value.filter((p) => p.id !== plant.id);
+        closePlantModal();
+      } catch (error) {
+        console.error('Error deleting plant:', error);
+      }
     };
 
     const fetchPlants = async () => {
       try {
         const response = await axios.get('plants');
-        console.log('Fetched plants:', response.data);
-
         plants.value = response.data.map((plant: any) => ({
           ...plant,
           imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
         }));
-
       } catch (error) {
         console.error('Error fetching plants:', error);
       }
     };
 
     const fetchUserName = async () => {
-        try {
-          const response = await axios.get('users/whoami');
-          userName.value = response.data.fullname;
-          mainMessage.value = `Welcome, ${userName.value}!`;
-        } catch (error) {
-          console.error('Error fetching user name:', error);
-        }
-
+      try {
+        const response = await axios.get('users/whoami');
+        userName.value = response.data.fullname;
+        mainMessage.value = `Welcome, ${userName.value}!`;
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
     };
 
     const changeMainMessage = () => {
@@ -164,6 +197,7 @@ export default defineComponent({
       showFramedText,
       isModalOpen,
       isPlantModalOpen,
+      isEditModalOpen,
       selectedPlant,
       plants,
       changeMainMessage,
@@ -172,8 +206,13 @@ export default defineComponent({
       closeModal,
       openPlantModal,
       closePlantModal,
+      openEditModal,
+      closeEditModal,
+      savePlant,
       handlePlantAdded,
+      handlePlantDeleted,
       editPlant,
+      handlePlantUpdated,
       logout,
     };
   },
@@ -195,7 +234,6 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
-    border-bottom: 1px solid #ccc;
 }
 
 .logo img {
@@ -231,11 +269,9 @@ export default defineComponent({
 }
 
 .main-message {
-  background-color:  #84d1cb;
-  ;
+  background-color: #84d1cb;
   padding: 10px;
   font-size: 25px;
-  cursor: pointer;
 }
 
 .framed-text {
@@ -279,9 +315,7 @@ export default defineComponent({
   gap: 15px;
   padding: 150px;
   justify-items: center; /* Center the items horizontally */
-  cursor: pointer;
 }
-
 
 @media (max-width: 900px) {
   .tiles {
@@ -289,4 +323,3 @@ export default defineComponent({
   }
 }
 </style>
-

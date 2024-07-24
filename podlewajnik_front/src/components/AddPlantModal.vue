@@ -151,7 +151,7 @@ export default defineComponent({
 }
 
 .modal-content {
-  background-color: rgb(198, 219, 226);
+  background-color: rgb(173, 217, 209);
   margin: 15% auto;
   padding: 20px;
   width: 80%;

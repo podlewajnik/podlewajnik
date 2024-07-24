@@ -7,7 +7,6 @@
     <div class="buttons">
       <button @click="onRegClick">Register</button>
       <button @click="onLogClick">Login</button>
-      <button @click="goToMainPage">Go to Main Page</button>
     </div>
   </div>
 </template>
@@ -36,7 +35,6 @@ export default defineComponent({
     return {
       onRegClick,
       onLogClick,
-      goToMainPage,
     };
   },
 });
@@ -63,10 +61,9 @@ button {
   margin-top: 20px;
 }
 
-/* Style the image to be a circle */
 .rounded-image {
   border-radius: 50%;
-  width: 450px; /* Adjust the width and height of the image as needed */
+  width: 450px;
   height: 450px;
 }
 </style>
