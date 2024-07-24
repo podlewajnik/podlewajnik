@@ -39,16 +39,25 @@
         required: true
       },
       plant: {
-        type: Object as PropType<Plant>,
-        required: true
+      type: Object as PropType<Plant | null>,
+      required: true,
       }
     },
     emits: ['close', 'save'],
-    setup(props, { emit }) {
-      const editedPlant = ref<Plant>({ ...props.plant });
+  setup(props, { emit }) {
+    const defaultPlant: Plant = {
+      id: 0,
+      name: '',
+      description: '',
+      location: '',
+      watering: '',
+      imageUrl: ''
+    };
+
+    const editedPlant = ref<Plant>({ ...defaultPlant, ...props.plant });
   
       watch(() => props.plant, (newPlant) => {
-        editedPlant.value = { ...newPlant };
+        editedPlant.value = { ...defaultPlant, ...newPlant };
       });
   
       const closeEditModal = () => {

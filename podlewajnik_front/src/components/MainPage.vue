@@ -49,6 +49,7 @@
       @close="closeEditModal"
       @save="savePlant"
     />
+    
   </div>
 </template>
 

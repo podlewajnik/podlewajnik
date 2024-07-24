@@ -27,7 +27,7 @@ export default defineComponent({
     },
     plant: {
       type: Object as PropType<Plant | null>,
-      required: false,
+      required: true,
     },
   },
   emits: ['close', 'edit'],
