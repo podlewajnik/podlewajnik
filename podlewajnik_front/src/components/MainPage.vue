@@ -11,8 +11,7 @@
     </header>
     <div class="framed-text" v-if="showFramedText">
       <p>
-        Add some plants and details about them. If you want to get a
-        notification about watering, add your email and date of
+        Add some plants and details about them. If you want to start click on "Add plant" button
       </p>
       <button @click="hideFramedText">Got it!</button>
     </div>
@@ -83,6 +82,7 @@ export default defineComponent({
 
     const hideFramedText = () => {
       showFramedText.value = false;
+      localStorage.setItem('hideFramedText', 'true'); //needs changes, still visible after log in agin.  
     };
 
     const openModal = () => {
@@ -139,13 +139,9 @@ export default defineComponent({
       closeEditModal();
     };
 
-    const handlePlantAdded = (newPlant: {
-      name: string;
-      location: string;
-      description: string;
-      watering: string;
-    }) => {
-      console.log('New plant added:', newPlant);
+    const handlePlantAdded = (newPlant: Plant) => {
+      plants.value.push(newPlant); 
+      closeModal();
     };
 
     const fetchPlants = async () => {
