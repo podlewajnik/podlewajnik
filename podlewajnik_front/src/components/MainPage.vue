@@ -49,7 +49,6 @@
       @close="closeEditModal"
       @save="savePlant"
     />
-    
   </div>
 </template>
 
@@ -117,7 +116,9 @@ export default defineComponent({
     };
 
     const handlePlantUpdated = (updatedPlant: Plant) => {
-      const index = plants.value.findIndex((plant) => plant.id === updatedPlant.id);
+      const index = plants.value.findIndex(
+        (plant) => plant.id === updatedPlant.id,
+      );
       if (index !== -1) {
         plants.value[index] = updatedPlant;
       }
@@ -125,18 +126,18 @@ export default defineComponent({
     };
 
     const savePlant = async (updatedPlant: Plant) => {
-  try {
-    await axios.patch(`http://localhost:8000/plant/${updatedPlant.id}`, {
-      title: updatedPlant.name,
-      content: updatedPlant.description,
-      // Include other fields as needed
-    });
-    // Update plants array or perform other actions upon successful update
-  } catch (error) {
-    console.error('Error saving plant:', error);
-  }
-  closeEditModal();
-};
+      try {
+        await axios.patch(`http://localhost:8000/plant/${updatedPlant.id}`, {
+          title: updatedPlant.name,
+          content: updatedPlant.description,
+          // Include other fields as needed
+        });
+        // Update plants array or perform other actions upon successful update
+      } catch (error) {
+        console.error('Error saving plant:', error);
+      }
+      closeEditModal();
+    };
 
     const handlePlantAdded = (newPlant: {
       name: string;
@@ -211,9 +212,6 @@ export default defineComponent({
 });
 </script>
 
-
-
-
 <style scoped>
 .main-page {
   text-align: left;
@@ -229,7 +227,6 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
-    border-bottom: 1px solid #ccc;
 }
 
 .logo img {
@@ -265,11 +262,9 @@ export default defineComponent({
 }
 
 .main-message {
-  background-color:  #84d1cb;
-  ;
+  background-color: #84d1cb;
   padding: 10px;
   font-size: 25px;
-  cursor: pointer;
 }
 
 .framed-text {
@@ -313,9 +308,7 @@ export default defineComponent({
   gap: 15px;
   padding: 150px;
   justify-items: center; /* Center the items horizontally */
-  cursor: pointer;
 }
-
 
 @media (max-width: 900px) {
   .tiles {
@@ -323,4 +316,3 @@ export default defineComponent({
   }
 }
 </style>
-
