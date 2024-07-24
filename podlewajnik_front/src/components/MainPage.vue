@@ -144,6 +144,16 @@ export default defineComponent({
       closeModal();
     };
 
+    const handlePlantDeleted = async (plant: Plant) => {
+      try {
+        await axios.delete(`http://localhost:8000/plant/${plant.id}`);
+        plants.value = plants.value.filter((p) => p.id !== plant.id);
+        closePlantModal();
+      } catch (error) {
+        console.error('Error deleting plant:', error);
+      }
+    };
+
     const fetchPlants = async () => {
       try {
         const response = await axios.get('plants');
@@ -200,6 +210,7 @@ export default defineComponent({
       closeEditModal,
       savePlant,
       handlePlantAdded,
+      handlePlantDeleted,
       editPlant,
       handlePlantUpdated,
       logout,
