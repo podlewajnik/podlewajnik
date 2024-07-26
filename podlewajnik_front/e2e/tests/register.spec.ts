@@ -14,6 +14,7 @@ function generateRandomString(minLength: number, maxLength: number) {
   return result;
 }
 
+
 const nameErrorSelector = '.form-group:nth-child(1) .error';
 const emailErrorSelector = '.form-group:nth-child(2) .error';
 const loginErrorSelector = '.form-group:nth-child(3) .error';
@@ -80,10 +81,12 @@ test.describe('Actions on register page', () => {
     await page.getByLabel('Password:', { exact: true }).fill('Test1234!');
     await page.getByLabel('Confirm Password:').fill('Test1234!');
     await page.getByRole('button', { name: 'Confirm' }).click();
-
-   const emailError = await page.locator(emailErrorSelector);
-  await expect(emailError).toBeVisible();
-  await expect(emailError).toHaveText('Invalid email address.');
+  
+    // Filter by text to find the specific error message
+    const emailErrors = await page.locator(emailErrorSelector);
+    const specificError = emailErrors.locator('text=Invalid email address.');
+    await expect(specificError).toBeVisible();
+    await expect(specificError).toHaveText('Invalid email address.');
   });
 
   test('Check Password and Confirm Password Match', async ({ page }) => {
