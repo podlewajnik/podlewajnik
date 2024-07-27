@@ -1,11 +1,14 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
-  // "include": ["helpers/**/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@helpers/helpers": ["helpers/helpers.ts"],
-      
-    }
-  }
+      "@/*": ["src/*"],
+      "@pages/*": ["pages/*"],
+      "@helpers/*": ["helpers/*"]
+    },
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client", "node"]
+  },
+  "include": ["pages/**/*.ts", "helpers/**/*.ts", "tests/**/*.spec.ts"],
+  "exclude": ["node_modules"]
 }
