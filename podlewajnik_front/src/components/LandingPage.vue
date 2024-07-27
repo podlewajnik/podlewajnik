@@ -43,7 +43,7 @@ export default defineComponent({
 <style scoped>
 .landing-page {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 60px;
 }
 
 .buttons {
@@ -53,7 +53,7 @@ export default defineComponent({
 button {
   margin: 10px;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 
@@ -62,8 +62,10 @@ button {
 }
 
 .rounded-image {
+  margin-top: 50px;
+  margin-bottom: 50px;
   border-radius: 50%;
-  width: 450px;
-  height: 450px;
+  width: 550px;
+  height: 550px;
 }
 </style>

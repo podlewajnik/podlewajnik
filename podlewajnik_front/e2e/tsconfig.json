@@ -1,4 +1,15 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["./**/*"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@pages/*": ["pages/*"],
+      "@helpers/*": ["helpers/*"],
+      "@test_data/*": ["test_data/*"]
+    },
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client", "node"]
+  },
+  "include": ["pages/**/*.ts", "helpers/**/*.ts", "tests/**/*.spec.ts", "test_data/**/*.ts"],
+  "exclude": ["node_modules"]
 }
