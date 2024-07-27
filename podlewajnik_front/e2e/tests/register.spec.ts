@@ -1,18 +1,6 @@
 import { test, expect } from '@playwright/test';
-// import { generateRandomString } from '@helpers/helpers';
-
-function generateRandomString(minLength: number, maxLength: number) {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const length =
-    Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
-  let result = '';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
+import { generateRandomString } from '@helpers/helpers';
+import { selectors, errorSelectors, errorMessages } from '@pages/register.page';
 
 
 const nameErrorSelector = '.form-group:nth-child(1) .error';
@@ -81,7 +69,7 @@ test.describe('Actions on register page', () => {
     await page.getByLabel('Password:', { exact: true }).fill('Test1234!');
     await page.getByLabel('Confirm Password:').fill('Test1234!');
     await page.getByRole('button', { name: 'Confirm' }).click();
-  
+
     // Filter by text to find the specific error message
     const emailErrors = await page.locator(emailErrorSelector);
     const specificError = emailErrors.locator('text=Invalid email address.');

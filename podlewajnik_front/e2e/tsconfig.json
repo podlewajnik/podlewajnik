@@ -1,5 +1,11 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["./**/*"]
+  // "include": ["helpers/**/*"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@helpers/helpers": ["helpers/helpers.ts"],
+      
+    }
+  }
 }
-
