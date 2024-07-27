@@ -63,7 +63,7 @@ test.describe('Actions on register page', () => {
 
   test('Check Invalid Email Format', async ({ page }) => {
     await page.getByLabel(selectors.name).fill(userName);
-    await page.getByLabel(selectors.email).fill('jahn.john.john');
+    await page.getByLabel(selectors.email).fill('john.john.john');
     await page.getByLabel(selectors.login).fill(userLogin);
     await page
       .getByLabel(selectors.password, { exact: true })
@@ -76,6 +76,20 @@ test.describe('Actions on register page', () => {
     );
     await expect(emailError).toBeVisible();
     await expect(emailError).toHaveText(errorMessages.invalidEmail);
+  });
+
+
+  test('Check Already Registered Login', async ({ page }) => {
+    await page.getByLabel(selectors.name).fill(userName);
+    await page.getByLabel(selectors.email).fill(userMail);
+    await page.getByLabel(selectors.login).fill('Marianek');
+    await page
+      .getByLabel(selectors.password, { exact: true })
+      .fill(userPassword);
+    await page.getByLabel(selectors.confirmPassword).fill(confirmPassword);
+    await page.getByRole('button', { name: selectors.confirmButton }).click();
+
+    await expect(page).toHaveURL('/register-page');
   });
 
   test('Check Password and Confirm Password Match', async ({ page }) => {
