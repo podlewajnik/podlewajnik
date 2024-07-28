@@ -13,11 +13,11 @@
     <form @submit.prevent="onSubmit">
       <div class="form-group">
         <label for="login">Login:</label>
-        <input id="login" v-model="login" type="text" required />
+        <input id="login" v-model="login" type="text" />
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input id="passowrd" v-model="password" type="password" required />
+        <input id="password" v-model="password" type="password" />
       </div>
       <button type="submit">Login</button>
     </form>
@@ -53,7 +53,19 @@ export default defineComponent({
       return null;
     };
 
+    const validateFields = () => {
+      if (!login.value.trim() || !password.value.trim()) {
+        errorMessage.value = 'Both login and password fields are required.';
+        return false;
+      }
+      return true;
+    };
+
     const onSubmit = async () => {
+      if (!validateFields()) {
+        return;
+      }
+
       try {
         const formData = new FormData();
         formData.append('username', login.value);
@@ -97,6 +109,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .login-page {
@@ -197,7 +210,7 @@ button {
 
 .error {
   color: red;
-  margin-top: 5px;
+  margin-top: 15px;
 }
 
 @media (max-width: 900px) {
