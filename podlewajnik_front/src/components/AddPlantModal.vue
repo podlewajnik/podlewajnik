@@ -5,14 +5,7 @@
       <h2>Add a new plant</h2>
       <form @submit.prevent="addPlant">
         <label for="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          v-model="plantName"
-          required
-          minlength="1"
-          maxlength="100"
-        />
+        <input type="text" id="name" v-model="plantName" maxlength="100" />
 
         <label for="location">Location:</label>
         <input
@@ -40,6 +33,7 @@
 
         <button type="submit">Add</button>
       </form>
+      <div v-if="nameError" class="error-message">{{ nameError }}</div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success-message">
         {{ successMessage }}
@@ -47,6 +41,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from 'vue';
 import axios from 'axios';
@@ -65,6 +60,7 @@ export default defineComponent({
     const plantLocation = ref('');
     const plantDescription = ref('');
     const plantWatering = ref('');
+    const nameError = ref('');
     const errorMessage = ref('');
     const successMessage = ref('');
 
@@ -82,6 +78,7 @@ export default defineComponent({
       plantLocation.value = '';
       plantDescription.value = '';
       plantWatering.value = '';
+      nameError.value = '';
       errorMessage.value = '';
       successMessage.value = '';
     };
@@ -91,15 +88,36 @@ export default defineComponent({
       resetForm();
     };
 
+    const fetchPlants = async () => {
+      try {
+        const response = await axios.get('/plants');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching plants:', error);
+        return [];
+      }
+    };
+
     const addPlant = async () => {
       try {
         if (!plantName.value.trim()) {
           throw new Error('Name is required');
         }
 
-        if (plantName.value.length > 40) {
-          throw new Error('Name exceeds maximum length of 40 characters');
+        if (plantName.value.length > 100) {
+          throw new Error('Name exceeds maximum length of 100 characters');
         }
+
+        const plants = await fetchPlants();
+        const isUnique = !plants.some(
+          (plant: { name: string }) =>
+            plant.name.toLowerCase() === plantName.value.toLowerCase(),
+        );
+        if (!isUnique) {
+          throw new Error('Name must be unique');
+        }
+
+        nameError.value = '';
 
         const newPlant = {
           name: plantName.value,
@@ -130,6 +148,7 @@ export default defineComponent({
       plantLocation,
       plantDescription,
       plantWatering,
+      nameError,
       closeModal,
       addPlant,
       errorMessage,
@@ -138,6 +157,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style scoped>
 .modal {
   display: block;
