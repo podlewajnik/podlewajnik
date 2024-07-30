@@ -78,7 +78,6 @@ test.describe('Actions on register page', () => {
     await expect(emailError).toHaveText(errorMessages.invalidEmail);
   });
 
-
   test('Check Already Registered Login', async ({ page }) => {
     await page.getByLabel(selectors.name).fill(userName);
     await page.getByLabel(selectors.email).fill(userMail);
@@ -124,16 +123,12 @@ test.describe('Actions on register page', () => {
     await page.getByLabel(selectors.name).fill(userName);
     await page.getByLabel(selectors.email).fill(userMail);
     await page.getByLabel(selectors.login).fill(userLogin);
+
+    const longPassword = 'a'.repeat(100);
     await page
       .getByLabel(selectors.password, { exact: true })
-      .fill(
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      );
-    await page
-      .getByLabel(selectors.confirmPassword)
-      .fill(
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      );
+      .fill(longPassword);
+    await page.getByLabel(selectors.confirmPassword).fill(longPassword);
     await page.getByRole('button', { name: selectors.confirmButton }).click();
 
     const passwordError = await page.locator(
