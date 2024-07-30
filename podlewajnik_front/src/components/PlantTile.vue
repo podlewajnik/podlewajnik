@@ -4,7 +4,7 @@
       <img :src="imageSrc" alt="Item Image" class="tile-image" />
     </div>
     <div class="tile-content">
-      <h3>{{ name }}</h3>
+      <h3>{{ truncatedName }}</h3>
        <p class="tile-section"><strong>Description:</strong> {{ description }}</p>
        <p class="tile-section"><strong>Location:</strong> {{ location }}</p>
      
@@ -28,6 +28,8 @@ export default defineComponent({
     description: {
       type: String,
       required: true,
+
+      
     },
     location: {
       type: String,
@@ -44,10 +46,18 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const maxLength = 25; // Maximum length for the plant name
+
+    const truncateText = (text: string, length: number): string => {
+      return text.length > length ? text.slice(0, length) + '...' : text;
+    };
+
+    const truncatedName = computed(() => truncateText(props.name, maxLength));
     const imageSrc = computed(() => props.imageUrl || placeholderImage);
 
     return {
       imageSrc,
+      truncatedName,
     };
   },
 });

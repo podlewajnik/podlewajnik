@@ -5,35 +5,19 @@
       <h2>Add a new plant</h2>
       <form @submit.prevent="addPlant">
         <label for="name">Name:</label>
-        <input type="text" id="name" v-model="plantName" maxlength="100" />
+        <input type="text" id="name" v-model="plantName" />
 
         <label for="location">Location:</label>
-        <input
-          type="text"
-          id="location"
-          v-model="plantLocation"
-          maxlength="1000"
-        />
+        <input type="text" id="location" v-model="plantLocation" />
 
         <label for="description">Description:</label>
-        <input
-          type="text"
-          id="description"
-          v-model="plantDescription"
-          maxlength="1000"
-        />
+        <input type="text" id="description" v-model="plantDescription" />
 
         <label for="watering">Watering:</label>
-        <input
-          type="text"
-          id="watering"
-          v-model="plantWatering"
-          maxlength="1000"
-        />
+        <input type="text" id="watering" v-model="plantWatering" />
 
         <button type="submit">Add</button>
       </form>
-      <div v-if="nameError" class="error-message">{{ nameError }}</div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success-message">
         {{ successMessage }}
@@ -99,25 +83,43 @@ export default defineComponent({
     };
 
     const addPlant = async () => {
-      try {
-        if (!plantName.value.trim()) {
-          throw new Error('Name is required');
-        }
+  try {
+    if (!plantName.value.trim()) {
+      throw new Error('Name is required');
+    }
 
-        if (plantName.value.length > 100) {
-          throw new Error('Name exceeds maximum length of 100 characters');
-        }
+    if (plantName.value.length > 40) {
+      nameError.value = 'Name exceeds maximum length of 40 characters';
+      throw new Error('Name exceeds maximum length of 40 characters');
+    }
 
-        const plants = await fetchPlants();
-        const isUnique = !plants.some(
-          (plant: { name: string }) =>
-            plant.name.toLowerCase() === plantName.value.toLowerCase(),
-        );
-        if (!isUnique) {
-          throw new Error('Name must be unique');
-        }
+    if (plantLocation.value.length > 1000) {
+      errorMessage.value = 'Location exceeds maximum length';
+      throw new Error('Location exceeds maximum length');
+    }
 
-        nameError.value = '';
+    if (plantDescription.value.length > 1000) {
+      errorMessage.value = 'Description exceeds maximum length';
+      throw new Error('Description exceeds maximum length');
+    }
+
+    if (plantWatering.value.length > 1000) {
+      errorMessage.value = 'Watering instructions exceed maximum length';
+      throw new Error('Watering instructions exceed maximum length');
+    }
+
+    const plants = await fetchPlants();
+    const isUnique = !plants.some(
+      (plant: { name: string }) =>
+        plant.name.toLowerCase() === plantName.value.toLowerCase(),
+    );
+    if (!isUnique) {
+      nameError.value = 'Name must be unique';
+      throw new Error('Name must be unique');
+    }
+
+    nameError.value = '';
+
 
         const newPlant = {
           name: plantName.value,
@@ -148,7 +150,6 @@ export default defineComponent({
       plantLocation,
       plantDescription,
       plantWatering,
-      nameError,
       closeModal,
       addPlant,
       errorMessage,
