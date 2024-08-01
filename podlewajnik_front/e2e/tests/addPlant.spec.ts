@@ -12,36 +12,6 @@ test.describe('New Plant Modal', () => {
   });
 
   // Test Case TC01
-  test('Open and Close Modal', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    await expect(page.locator(modalSelector)).toBeVisible();
-    await page.click('.modal .close');
-    await expect(page.locator(modalSelector)).not.toBeVisible();
-  });
-
-  // Test Case TC02
-  test('Submit Empty Form', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText(
-      'Name is required',
-    );
-  });
-
-  // Test Case TC03
-  test('Submit Form with Only Name Filled', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.fill('input#name', plantName);
-    await page.getByRole('button', { name: 'Add', exact: true }).click();
-
-    const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
-    await page.waitForSelector(plantTileSelector);
-
-    const plantTile = page.locator(plantTileSelector);
-    await expect(plantTile).toBeVisible();
-  });
-
-  // Test Case TC04
   test('Submit Form with Valid Data', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
@@ -57,7 +27,37 @@ test.describe('New Plant Modal', () => {
     await expect(plantTile).toBeVisible();
   });
 
-  // Test Case TC05 
+  // Test Case TC02
+  test('Open and Close Modal', async ({ page }) => {
+    await page.getByRole('button', { name: 'Add plant' }).click();
+    await expect(page.locator(modalSelector)).toBeVisible();
+    await page.click('.modal .close');
+    await expect(page.locator(modalSelector)).not.toBeVisible();
+  });
+
+  // Test Case TC03
+  test('Submit Empty Form', async ({ page }) => {
+    await page.getByRole('button', { name: 'Add plant' }).click();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name is required',
+    );
+  });
+
+  // Test Case TC04
+  test('Submit Form with Only Name Filled', async ({ page }) => {
+    await page.getByRole('button', { name: 'Add plant' }).click();
+    await page.fill('input#name', plantName);
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+
+    const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
+    await page.waitForSelector(plantTileSelector);
+
+    const plantTile = page.locator(plantTileSelector);
+    await expect(plantTile).toBeVisible();
+  });
+
+  // Test Case TC05 (TO CHECK why it doesn't pass while running by plugin)
   test('Submit Form with Duplicate Name', async ({ page }) => {
     const duplicateName = plantName;
 
@@ -75,7 +75,9 @@ test.describe('New Plant Modal', () => {
     await page.fill('input#name', duplicateName);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
 
-    await expect(page.locator(errorMessageSelector)).toHaveText('Name must be unique');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name must be unique',
+    );
   });
 
   // Test Case TC06
@@ -159,7 +161,45 @@ test.describe('New Plant Modal', () => {
     await expect(page.locator('input#watering')).toBeEmpty();
   });
 
-  // Test Case TC12 (TO CHECK works when run by playwright plugin but not when run with npm )
+  // Test Case TC12 (TO CHECK why works with plugin but doesn't while run with npm)
+  test.skip('Check if Form is saved correctly after you re-filled Name field', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Add plant' }).click();
+
+    // Fill all input fields with valid data
+    await page.fill('input#name', plantName);
+    await page.fill('input#location', 'Living Room');
+    await page.fill('input#description', 'A lush green plant');
+    await page.fill('input#watering', 'Twice a week');
+
+    await page.fill('input#name', ''); // Clear the Name field
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name is required',
+    );
+
+    // Refill the "Name" field
+    await page.fill('input#name', plantName);
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+
+    const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
+    const plantTile = page.locator(plantTileSelector);
+
+    await expect(plantTile).toBeVisible();
+    await expect(plantTile.locator('.tile-content')).toContainText(plantName);
+    await expect(plantTile.locator('.tile-content')).toContainText(
+      'Description: A lush green plant',
+    );
+    await expect(plantTile.locator('.tile-content')).toContainText(
+      'Location: Living Room',
+    );
+    await expect(plantTile.locator('.tile-content')).toContainText(
+      'Watering: Twice a week',
+    );
+  });
+
+  // Test Case TC13 (TO CHECK works when run by playwright plugin but not when run with npm )
   test.skip('Check Error Message Display Logic', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
@@ -171,7 +211,7 @@ test.describe('New Plant Modal', () => {
     await expect(page.locator(errorMessageSelector)).not.toBeVisible();
   });
 
-  // Test Case TC13 (TODO needs changes in code)
+  // Test Case TC14 (TODO needs changes in code)
   test.skip('Simulate Backend Failure', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);

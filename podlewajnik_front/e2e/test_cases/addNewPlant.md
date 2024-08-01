@@ -102,8 +102,20 @@ Close the modal using the close (X) button.
 Reopen the "New Plant Modal".
 Expected Result: All fields should be empty when the modal is reopened.
 
-Check Error Message Display Logic
 Test Case ID: TC12
+Description: Verify that the plant tile displays correctly with all fields filled after initially filling all inputs, clearing the "Name" field, and then re-filling it before submitting.
+Steps:
+Open the "Add Plant Modal".
+Fill all input fields with valid data
+Delete the text in the "Name" field.
+Click the "Add" button (to check if it handles missing name correctly).
+Refill the "Name" field with correct name
+Click the "Add" button again.
+Verify that a plant tile is created and all fields are correctly filled.
+Expected Result: The plant tile should be created with all fields filled correctly after re-filling the "Name" and submitting the form.
+
+Check Error Message Display Logic
+Test Case ID: TC13
 Description: Verify that the error message is correctly displayed and cleared.
 Steps:
 Open the "New Plant Modal".
@@ -113,11 +125,10 @@ Expected Result: The error message should disappear, and a success message shoul
 
 
 Simulate Backend Failure
-Test Case ID: TC13
+Test Case ID: TC14
 Description: Verify that an error message is displayed when there is a backend failure.
 Steps:
 Open the "New Plant Modal".
 Simulate a backend failure when submitting the form.
 Click the "Add" button.
 Expected Result: An error message "Failed to add plant. Please try again." should be displayed.
-
