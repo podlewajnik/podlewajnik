@@ -88,6 +88,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 20; 
   }
   
   .modal-content {
@@ -99,6 +100,7 @@
     text-align: left;
     position: relative;
     border-radius: 10px;
+    z-index: 21;
   }
   
   .close-x {
