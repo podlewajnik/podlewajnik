@@ -161,9 +161,10 @@ test.describe('Actions on register page', () => {
   });
 });
 
-//   test('Check The Navigation', async ({ page }) => {
-//     await page.getByRole('img', { name: 'Back' }).click();
-//     await page.waitForURL('/');
-//     await expect(page).toHaveURL('/');
-//   });
-// });
+
+// TO CHECK why test dosn't work like manual test
+  test.skip('Check The Navigation', async ({ page }) => {
+    await page.getByRole('img', { name: 'Back' }).click();
+    await page.waitForURL('/');
+    await expect(page).toHaveURL('/');
+  });
