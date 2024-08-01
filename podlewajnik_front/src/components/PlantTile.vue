@@ -46,7 +46,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const maxLength = 25; // Maximum length for the plant name
+    const maxLength = 25; 
 
     const truncateText = (text: string, length: number): string => {
       return text.length > length ? text.slice(0, length) + '...' : text;
@@ -73,7 +73,7 @@ export default defineComponent({
   border: 2px solid #a0a0a0;
   border-radius: 15px;
   margin: 10px;
-  background-color: #9fd8d3; /* Change background color */
+  background-color: #9fd8d3; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -81,7 +81,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px; /* Adjust height as needed */
+  height: 200px;
  
   border-radius: 5px;
   overflow: hidden;
@@ -90,7 +90,7 @@ export default defineComponent({
 .tile-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: cover; /* Ensure image covers the area without stretching */
+  object-fit: cover; 
 }
 
 .tile-content {
@@ -100,7 +100,7 @@ export default defineComponent({
 }
 
 .tile-section {
-  margin-top: 8px; /* Adjust spacing between sections */
+  margin-top: 8px; 
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
