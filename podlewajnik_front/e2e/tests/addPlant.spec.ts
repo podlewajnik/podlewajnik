@@ -1,17 +1,15 @@
 import { expect } from '@playwright/test';
 import { generateRandomString, test } from '@helpers/helpers';
 
-
 const modalSelector = '.modal';
 const errorMessageSelector = '.error-message';
-const plantName = generateRandomString (6,12);
 
-
+const plantName = generateRandomString(6, 12);
 
 test.describe('New Plant Modal', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto('/main-page');
-    });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/main-page');
+  });
 
   // Test Case TC01
   test('Open and Close Modal', async ({ page }) => {
@@ -25,113 +23,129 @@ test.describe('New Plant Modal', () => {
   test('Submit Empty Form', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText('Name is required');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name is required',
+    );
   });
 
   // Test Case TC03
   test('Submit Form with Only Name Filled', async ({ page }) => {
-    
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    // const plantTileSelector = `.tiles .plant-tile:has-text("${plantName}")`;
-    // await page.waitForSelector(plantTileSelector, { timeout: 10000 });
-    
-    // Verify the plant tile is visible
-    // const plantTile = page.locator(plantTileSelector);
-    // await expect(plantTile).toBeVisible();
-});
+
+    const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
+    await page.waitForSelector(plantTileSelector);
+
+    const plantTile = page.locator(plantTileSelector);
+    await expect(plantTile).toBeVisible();
+  });
 
   // Test Case TC04
   test('Submit Form with Valid Data', async ({ page }) => {
-  
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
     await page.fill('input#location', 'Living Room');
     await page.fill('input#description', 'A beautiful green fern');
     await page.fill('input#watering', 'Once a week');
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await page.waitForSelector(`.plant-tile:has-text("${plantName}")`, { timeout: 5000 });
-    await expect(page.locator(`.plant-tile:has-text("${plantName}")`)).toBeVisible();
+
+    const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
+    await page.waitForSelector(plantTileSelector);
+
+    const plantTile = page.locator(plantTileSelector);
+    await expect(plantTile).toBeVisible();
   });
 
-    // Test Case TC04 (Change counting!!!!!!!)
+  // Test Case TC05 
   test('Submit Form with Duplicate Name', async ({ page }) => {
-    const duplicateName = 'ExistingPlantName';
-  
+    const duplicateName = plantName;
+
+    await page.getByRole('button', { name: 'Add plant' }).click();
+    await page.fill('input#name', plantName);
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+
+    const plantTileSelector = `.tile:has(.tile-content:has-text("${duplicateName}"))`;
+    await page.waitForSelector(plantTileSelector);
+
+    const plantTile = page.locator(plantTileSelector);
+    await expect(plantTile).toBeVisible();
 
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', duplicateName);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-  
-   
-    await page.waitForSelector(`.plant-tile:has-text("${duplicateName}")`, { timeout: 5000 });
-    await expect(page.locator(`.plant-tile:has-text("${duplicateName}")`)).toBeVisible();
-  
- 
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.fill('input#name', duplicateName);
-    await page.getByRole('button', { name: 'Add', exact: true }).click();
 
-    await expect(page.locator('#name-error')).toHaveText('Name must be unique');
-  });
-  
-
-  // Test Case TC05
-  test('Submit Form with Name Exceeding Maximum Length', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    const longName = generateRandomString (44, 55);
-    await page.fill('input#name', longName);
-    await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText('Name exceeds maximum length of 40 characters');
+    await expect(page.locator(errorMessageSelector)).toHaveText('Name must be unique');
   });
 
   // Test Case TC06
-  test('Submit Form with Name Field Containing Only Spaces', async ({ page }) => {
+  test('Submit Form with Name Exceeding Maximum Length', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.fill('input#name', '    ');
+    const longName = generateRandomString(44, 55);
+    await page.fill('input#name', longName);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText('Name is required');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name exceeds maximum length of 40 characters',
+    );
   });
 
   // Test Case TC07
-  test('Submit Form with Location Exceeding Maximum Length', async ({ page }) => {
+  test('Submit Form with Name Field Containing Only Spaces', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Add plant' }).click();
+    await page.fill('input#name', '    ');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name is required',
+    );
+  });
 
+  // Test Case TC08
+  test('Submit Form with Location Exceeding Maximum Length', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
     const longLocation = 'a'.repeat(1001);
     await page.fill('input#location', longLocation);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText('Location exceeds maximum length');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Location exceeds maximum length',
+    );
   });
 
-  // Test Case TC08
-  test('Submit Form with Description Exceeding Maximum Length', async ({ page }) => {
-
+  // Test Case TC09
+  test('Submit Form with Description Exceeding Maximum Length', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
     const longDescription = 'a'.repeat(1001);
     await page.fill('input#description', longDescription);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-   
-    await expect(page.locator(errorMessageSelector)).toHaveText('Description exceeds maximum length');
+
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Description exceeds maximum length',
+    );
   });
 
-  // Test Case TC09
-  test('Submit Form with Watering Exceeding Maximum Length', async ({ page }) => {
-
+  // Test Case TC10
+  test('Submit Form with Watering Exceeding Maximum Length', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
     const longWatering = 'a'.repeat(1001);
     await page.fill('input#watering', longWatering);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    // Assuming there is an error handling for watering length
-    await expect(page.locator(errorMessageSelector)).toHaveText('Watering instructions exceed maximum length');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Watering instructions exceed maximum length',
+    );
   });
 
-  // Test Case TC10
+  // Test Case TC11
   test('Check if Form Resets After Closing Modal', async ({ page }) => {
-  
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', 'Fern');
     await page.fill('input#location', 'Living Room');
@@ -145,35 +159,34 @@ test.describe('New Plant Modal', () => {
     await expect(page.locator('input#watering')).toBeEmpty();
   });
 
-  // Test Case TC11
+  // Test Case TC12
   test('Check Error Message Display Logic', async ({ page }) => {
-
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator(errorMessageSelector)).toHaveText('Name is required');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Name is required',
+    );
     await page.fill('input#name', plantName);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    // await expect(page.locator(successMessageSelector)).toHaveText('Plant added successfully!');
     await expect(page.locator(errorMessageSelector)).not.toBeVisible();
   });
 
-
-
-  // Test Case TC12
+  // Test Case TC13
   test('Simulate Backend Failure', async ({ page }) => {
-    
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
-    
+
     // Simulating backend failure by intercepting the request
-    await page.route('**/plants', route => {
+    await page.route('**/plaants', (route) => {
       route.fulfill({
         status: 500,
         body: 'Internal Server Error',
       });
     });
-    
+
     await page.click('button:has-text("Add")');
-    await expect(page.locator(errorMessageSelector)).toHaveText('Failed to add plant. Please try again.');
+    await expect(page.locator(errorMessageSelector)).toHaveText(
+      'Failed to add plant. Please try again.',
+    );
   });
 });
