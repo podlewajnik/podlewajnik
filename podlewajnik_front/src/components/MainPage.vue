@@ -11,7 +11,8 @@
     </header>
     <div class="framed-text" v-if="showFramedText">
       <p>
-        Add some plants and details about them. If you want to start click on "Add plant" button
+        Add some plants and details about them. If you want to start click on
+        "Add plant" button
       </p>
       <button @click="hideFramedText">Got it!</button>
     </div>
@@ -71,7 +72,7 @@ export default defineComponent({
   },
   setup() {
     const mainMessage = ref('Welcome!');
-    const showFramedText = ref(true);
+    const showFramedText = ref(false);
     const isModalOpen = ref(false);
     const isPlantModalOpen = ref(false);
     const isEditModalOpen = ref(false);
@@ -81,8 +82,9 @@ export default defineComponent({
     const router = useRouter();
 
     const hideFramedText = () => {
+      console.log('Hiding framed text');
       showFramedText.value = false;
-      localStorage.setItem('hideFramedText', 'true'); //needs changes, still visible after log in agin.  
+      localStorage.setItem('hideFramedText', 'true');
     };
 
     const openModal = () => {
@@ -129,10 +131,7 @@ export default defineComponent({
       try {
         await axios.patch(`http://localhost:8000/plant/${updatedPlant.id}`, {
           title: updatedPlant.name,
-          content: updatedPlant.description,
-          // Include other fields as needed
         });
-        // Update plants array or perform other actions upon successful update
       } catch (error) {
         console.error('Error saving plant:', error);
       }
@@ -140,7 +139,7 @@ export default defineComponent({
     };
 
     const handlePlantAdded = (newPlant: Plant) => {
-      plants.value.push(newPlant); 
+      plants.value.push(newPlant);
       closeModal();
     };
 
@@ -159,7 +158,7 @@ export default defineComponent({
         const response = await axios.get('plants');
         plants.value = response.data.map((plant: any) => ({
           ...plant,
-          imageUrl: plant.imageUrl || '', // Ensure imageUrl is always present
+          imageUrl: plant.imageUrl || '',
         }));
       } catch (error) {
         console.error('Error fetching plants:', error);
@@ -187,9 +186,34 @@ export default defineComponent({
       router.push('/login-page');
     };
 
+    const checkFramedTextVisibility = () => {
+      const registrationTimestamp = localStorage.getItem(
+        'registrationTimestamp',
+      );
+      const hideFramedTextFlag = localStorage.getItem('hideFramedText');
+
+      if (registrationTimestamp && !hideFramedTextFlag) {
+        const currentTime = Date.now();
+        const timeSinceRegistration =
+          currentTime - parseInt(registrationTimestamp, 10);
+        const oneHour = 60 * 60 * 1000;
+        showFramedText.value = timeSinceRegistration < oneHour;
+        console.log('showFramedText:', showFramedText.value);
+      } else {
+        showFramedText.value = false;
+      }
+    };
+
+    const clearHideFramedTextFlag = () => {
+      localStorage.removeItem('hideFramedText');
+      console.log('Cleared hideFramedText flag for testing.');
+    };
+
     onMounted(() => {
       fetchUserName();
       fetchPlants();
+      clearHideFramedTextFlag();
+      checkFramedTextVisibility();
     });
 
     return {

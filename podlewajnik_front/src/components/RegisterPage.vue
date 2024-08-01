@@ -156,6 +156,11 @@ const validateConfirmPassword = (
   }
   return errors;
 };
+
+const saveRegistrationTimestamp = () => {
+    const registrationTime = Date.now();
+    localStorage.setItem('registrationTimestamp', registrationTime.toString());
+};
     //Submit function:
 
     const handleSubmit = async () => {
@@ -187,7 +192,9 @@ const validateConfirmPassword = (
           successMessage.value = 'Registration successful!';
           errorMessage.value = '';
           console.log('Registration successful:', response.data);
+          saveRegistrationTimestamp();
           router.push('/main-page');
+          
         } catch (error) {
           console.error('Registration error:', error);
           errorMessage.value = 'Failed to register. Please try again.';
@@ -222,6 +229,7 @@ const validateConfirmPassword = (
       passwordErrors,
       confirmPasswordErrors,
       apiError,
+      saveRegistrationTimestamp,
       handleSubmit,
       goBack,
     };
