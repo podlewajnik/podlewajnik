@@ -2,9 +2,13 @@
 
 import { expect } from '@playwright/test';
 import { generateRandomString, test } from '@helpers/helpers';
+import { plantData } from '@test_data/plant.data';
 
 const errorMessageSelector = '.error-message';
-const plantName = generateRandomString(6, 12);
+const plantName = plantData.plantName;
+const plantLocation = plantData.plantLocation;
+const plantDescription = plantData.plantDescription;
+const plantWatering = plantData.plantWatering;
 const firstPlantName = generateRandomString(6, 12);
 
 test.describe('Plant Ediotion', () => {
@@ -18,9 +22,9 @@ test.describe('Plant Ediotion', () => {
     if (!plantExists) {
       await page.getByRole('button', { name: 'Add plant' }).click();
       await page.fill('input#name', firstPlantName);
-      await page.fill('input#location', 'Living Room');
-      await page.fill('input#description', 'A lush green plant');
-      await page.fill('input#watering', 'Twice a week');
+      await page.fill('input#location', plantLocation);
+      await page.fill('input#description', plantDescription);
+      await page.fill('input#watering', plantWatering);
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await expect(plantTile).toBeVisible();
     }
@@ -31,9 +35,9 @@ test.describe('Plant Ediotion', () => {
     await page.locator('.tiles > div:nth-child(2)').click();
     await page.getByRole('button', { name: 'Edit' }).click();
     await page.getByLabel('Name').fill(plantName);
-    await page.getByLabel('Location').fill('balcony');
-    await page.getByLabel('Description').fill('herbs');
-    await page.getByLabel('Watering').fill('Monday, Wedesday, Friday');
+    await page.getByLabel('Location').fill(plantLocation);
+    await page.getByLabel('Description').fill(plantDescription);
+    await page.getByLabel('Watering').fill(plantWatering);
     await page.getByRole('button', { name: 'Save' }).click();
 
     const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
@@ -169,9 +173,9 @@ test.describe('Plant Ediotion', () => {
     await page.getByRole('button', { name: 'Edit' }).click();
 
     await page.fill('input#name', ''); // Clear the Name field
-    await page.fill('input#location', 'Living Room');
-    await page.fill('input#description', 'A beautiful green fern');
-    await page.fill('input#watering', 'Once a week');
+    await page.fill('input#location', plantLocation);
+    await page.fill('input#description', plantDescription);
+    await page.fill('input#watering', plantWatering);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(page.locator(errorMessageSelector)).toHaveText(
       'Name is required',
@@ -193,7 +197,7 @@ test.describe('Plant Ediotion', () => {
       'Location: Living Room',
     );
     await expect(plantTile.locator('.tile-content')).toContainText(
-      'Watering: Twice a week',
+      'Watering: Mondays and Thursdays',
     );
   });
 });

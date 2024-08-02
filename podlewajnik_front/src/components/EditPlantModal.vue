@@ -213,5 +213,9 @@ export default defineComponent({
     padding: 10px 20px;
     cursor: pointer;
   }
+  
+  .modal-content h2 {
+  text-align: center;
+}
   </style>
   

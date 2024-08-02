@@ -1,10 +1,15 @@
 import { expect } from '@playwright/test';
 import { generateRandomString, test } from '@helpers/helpers';
+import { plantData } from '@test_data/plant.data';
+
 
 const modalSelector = '.modal';
 const errorMessageSelector = '.error-message';
+const plantName = plantData.plantName;
+const plantLocation = plantData.plantLocation;
+const plantDescription = plantData.plantDescription;
+const plantWatering = plantData.plantWatering;
 
-const plantName = generateRandomString(6, 12);
 
 test.describe('New Plant Modal', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,9 +20,9 @@ test.describe('New Plant Modal', () => {
   test('Submit Form with Valid Data', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.fill('input#name', plantName);
-    await page.fill('input#location', 'Living Room');
-    await page.fill('input#description', 'A beautiful green fern');
-    await page.fill('input#watering', 'Once a week');
+    await page.fill('input#location', plantLocation);
+    await page.fill('input#description', plantDescription);
+    await page.fill('input#watering', plantWatering);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
 
     const plantTileSelector = `.tile:has(.tile-content:has-text("${plantName}"))`;
@@ -149,10 +154,10 @@ test.describe('New Plant Modal', () => {
   // Test Case TC11
   test('Check if Form Resets After Closing Modal', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.fill('input#name', 'Fern');
-    await page.fill('input#location', 'Living Room');
-    await page.fill('input#description', 'A beautiful green fern');
-    await page.fill('input#watering', 'Once a week');
+    await page.fill('input#name', plantName);
+    await page.fill('input#location', plantLocation);
+    await page.fill('input#description', plantDescription);
+    await page.fill('input#watering', plantWatering);
     await page.click('.modal .close');
     await page.click('button:has-text("Add plant")');
     await expect(page.locator('input#name')).toBeEmpty();
@@ -169,9 +174,9 @@ test.describe('New Plant Modal', () => {
 
     // Fill all input fields with valid data
     await page.fill('input#name', plantName);
-    await page.fill('input#location', 'Living Room');
-    await page.fill('input#description', 'A lush green plant');
-    await page.fill('input#watering', 'Twice a week');
+    await page.fill('input#location', plantLocation);
+    await page.fill('input#description', plantDescription);
+    await page.fill('input#watering', plantWatering);
 
     await page.fill('input#name', ''); // Clear the Name field
     await page.getByRole('button', { name: 'Add', exact: true }).click();
@@ -195,7 +200,7 @@ test.describe('New Plant Modal', () => {
       'Location: Living Room',
     );
     await expect(plantTile.locator('.tile-content')).toContainText(
-      'Watering: Twice a week',
+      'Watering: Monday and Thursdays',
     );
   });
 
