@@ -4,7 +4,7 @@
       <button class="close-x" @click="close">x</button>
       <h2>{{ plant?.name }}</h2>
       <img :src="imageSrc" alt="Plant Image" class="plant-image" />
-      <p>{{ plant?.description }}</p>
+      <p><strong>Description:</strong> {{ plant?.description }}</p>
       <p><strong>Location:</strong> {{ plant?.location }}</p>
       <p><strong>Watering:</strong> {{ plant?.watering }}</p>
       <button @click="edit">Edit</button>
