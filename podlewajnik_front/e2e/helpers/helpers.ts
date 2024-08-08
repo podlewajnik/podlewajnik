@@ -16,19 +16,3 @@ export function generateRandomString(minLength: number, maxLength: number) {
   }
   return result;
 }
-
-export async function login(page: Page) {
-  await page.goto('/login-page');
-
-  await page.getByLabel('Login:').fill(userLogin);
-  await page.getByLabel('Password:').fill(userPassword);
-  await page.getByRole('button', { name: 'Login' }).click();
-  await page.waitForURL('/main-page', { timeout: 30000 });
-}
-
-export const test = baseTest.extend({
-  page: async ({ page }, use) => {
-    await login(page);
-    await use(page);
-  },
-});
