@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures/login.fixture';
 import { plantData } from '@test_data/plant.data';
 import { registerData } from '@test_data/register.data';
 
@@ -32,13 +32,8 @@ test.describe('Podlewajnik E2E Tests', () => {
     await page.close();
   });
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login-page');
-    await page.getByLabel('Login:').fill(userLogin);
-    await page.getByLabel('Password:').fill(userPassword);
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page).toHaveURL('/main-page');
+  test.beforeEach(async ({ login }) => {
+    await login();
   });
 
   test('Add a New Plant and Verify Details', async ({ page }) => {

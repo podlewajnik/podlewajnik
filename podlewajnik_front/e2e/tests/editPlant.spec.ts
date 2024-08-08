@@ -1,7 +1,7 @@
 //These test fail due to peroblem with edition component
 
-import { expect } from '@playwright/test';
-import { generateRandomString, test } from '@helpers/helpers';
+import { test, expect } from '@fixtures/login.fixture';
+import { generateRandomString } from '@helpers/helpers';
 import { plantData } from '@test_data/plant.data';
 
 const errorMessageSelector = '.error-message';
@@ -12,9 +12,11 @@ const plantWatering = plantData.plantWatering;
 const firstPlantName = generateRandomString(6, 12);
 
 test.describe('Plant Ediotion', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/main-page');
-
+  test.beforeEach(async ({ login }) => {
+    await login();
+  });
+   
+  test('Check and Add Plant if Not Exists', async ({ page }) => {
     const plantTileSelector = `.tile:has(.tile-content:has-text("${firstPlantName}"))`;
     const plantTile = page.locator(plantTileSelector);
     const plantExists = (await plantTile.count()) > 0;

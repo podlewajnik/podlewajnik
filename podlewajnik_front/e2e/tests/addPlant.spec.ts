@@ -1,19 +1,17 @@
-import { expect } from '@playwright/test';
-import { generateRandomString, test } from '@helpers/helpers';
+import { test, expect } from '@fixtures/login.fixture';
+import { generateRandomString } from '@helpers/helpers';
 import { plantData } from '@test_data/plant.data';
 
-
-const modalSelector = '.modal';
-const errorMessageSelector = '.error-message';
-const plantName = plantData.plantName;
-const plantLocation = plantData.plantLocation;
-const plantDescription = plantData.plantDescription;
-const plantWatering = plantData.plantWatering;
-
-
 test.describe('New Plant Modal', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/main-page');
+  const modalSelector = '.modal';
+  const errorMessageSelector = '.error-message';
+  const plantName = plantData.plantName;
+  const plantLocation = plantData.plantLocation;
+  const plantDescription = plantData.plantDescription;
+  const plantWatering = plantData.plantWatering;
+
+  test.beforeEach(async ({ login }) => {
+    await login();
   });
 
   // Test Case TC01
