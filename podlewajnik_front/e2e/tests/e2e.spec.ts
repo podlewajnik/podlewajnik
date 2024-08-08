@@ -1,20 +1,25 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures/login.fixture';
 import { plantData } from '@test_data/plant.data';
 import { registerData } from '@test_data/register.data';
 
+let userLogin: string;
+let userPassword: string;
+
 //As a registered user I want add, edit and delete the plant
 test.describe('Podlewajnik E2E Tests', () => {
-  const userName = registerData.userName;
-  const userMail = registerData.userMail;
-  const userLogin = registerData.userLogin;
-  const userPassword = registerData.userPassword;
-  const confirmPassword = registerData.confirmPassword;
-  const plantName = plantData.plantName;
-  const plantLocation = plantData.plantLocation;
-  const plantDescription = plantData.plantDescription;
-  const plantWatering = plantData.plantWatering;
+    const userName = registerData.userName;
+    const userMail = registerData.userMail;
+    const confirmPassword = registerData.confirmPassword;
+    const plantName = plantData.plantName;
+    const plantLocation = plantData.plantLocation;
+    const plantDescription = plantData.plantDescription;
+    const plantWatering = plantData.plantWatering;
 
-  test.beforeAll(async ({ page }) => {
+  test.beforeAll(async ({ browser }) => {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    userLogin = registerData.userLogin;
+    userPassword = registerData.userPassword;
     await page.goto('/');
     await page.getByRole('button', { name: 'Register' }).click();
     await page.getByLabel('Name:').fill(userName);
@@ -24,15 +29,11 @@ test.describe('Podlewajnik E2E Tests', () => {
     await page.getByLabel('Confirm Password:').fill(confirmPassword);
     await page.getByRole('button', { name: 'Confirm' }).click();
     await expect(page).toHaveURL('/main-page');
+    await page.close();
   });
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login-page');
-    await page.getByLabel('Login:').fill(userLogin);
-    await page.getByLabel('Password:').fill(userPassword);
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page).toHaveURL('/main-page');
+  test.beforeEach(async ({ login }) => {
+    await login();
   });
 
   test('Add a New Plant and Verify Details', async ({ page }) => {
