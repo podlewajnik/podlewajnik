@@ -44,4 +44,6 @@ npm run test:e2e -- --project=chromium
 npm run test:e2e -- tests/example.spec.ts
 # Runs the tests in debug mode
 npm run test:e2e -- --debug
+# Runs the tests with trace viewer
+npx playwright test --trace on 
 ```
