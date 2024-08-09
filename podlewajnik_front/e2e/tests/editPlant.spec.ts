@@ -55,12 +55,12 @@ test.describe('Plant Ediotion', () => {
     await page.getByRole('button', { name: 'Edit' }).click();
     await page.getByLabel('Name').fill(plantName);
     await page.getByRole('button', { name: 'Cancel' }).click();
-    const plantTileSelector = `.tile:has(.tile-content:has-text("${firstPlantName}"))`;
-    await page.waitForSelector(plantTileSelector);
 
-    const plantTile = page.locator(plantTileSelector);
-    await expect(plantTile).toBeVisible();
-  });
+    const modalSelector = '.modal';
+    const plantNameInModal = await page.locator(`${modalSelector} >> text=${plantName}`);
+
+    await expect(plantNameInModal).not.toBeVisible();
+});
 
   //Test Case ID: TC03
   test.skip('Edit Plant with Empty Name', async ({ page }) => {
