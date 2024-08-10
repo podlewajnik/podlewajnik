@@ -164,7 +164,7 @@ test.describe('New Plant Modal', () => {
     await expect(page.locator('input#watering')).toBeEmpty();
   });
 
-  // Test Case TC12 (fails with npm run)
+  // Test Case TC12 (fails with npm group tests)
   test('Check if Form is saved correctly after you re-filled Name field', async ({
     page,
   }) => {
@@ -203,7 +203,7 @@ test.describe('New Plant Modal', () => {
     
   });
 
-  // Test Case TC13 (TO CHECK works when run by playwright plugin but not when run with npm )
+  // Test Case TC13 (TO CHECK works when run by playwright plugin but not when run with npm group tests )
   test.skip('Check Error Message Display Logic', async ({ page }) => {
     await page.getByRole('button', { name: 'Add plant' }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
@@ -215,22 +215,4 @@ test.describe('New Plant Modal', () => {
     await expect(page.locator(errorMessageSelector)).not.toBeVisible();
   });
 
-  // Test Case TC14 (TODO needs changes in code)
-  test.skip('Simulate Backend Failure', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add plant' }).click();
-    await page.fill('input#name', plantName);
-
-    // Simulating backend failure by intercepting the request
-    await page.route('**/plaants', (route) => {
-      route.fulfill({
-        status: 500,
-        body: 'Internal Server Error',
-      });
-    });
-
-    await page.click('button:has-text("Add")');
-    await expect(page.locator(errorMessageSelector)).toHaveText(
-      'Failed to add plant. Please try again.',
-    );
-  });
 });
