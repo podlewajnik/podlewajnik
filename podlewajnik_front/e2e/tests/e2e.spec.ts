@@ -7,13 +7,13 @@ let userPassword: string;
 
 //As a registered user I want add, edit and delete the plant
 test.describe('Podlewajnik E2E Tests', () => {
-    const userName = registerData.userName;
-    const userMail = registerData.userMail;
-    const confirmPassword = registerData.confirmPassword;
-    const plantName = plantData.plantName;
-    const plantLocation = plantData.plantLocation;
-    const plantDescription = plantData.plantDescription;
-    const plantWatering = plantData.plantWatering;
+  const userName = registerData.userName;
+  const userMail = registerData.userMail;
+  const confirmPassword = registerData.confirmPassword;
+  const plantName = plantData.plantName;
+  const plantLocation = plantData.plantLocation;
+  const plantDescription = plantData.plantDescription;
+  const plantWatering = plantData.plantWatering;
 
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
@@ -52,17 +52,18 @@ test.describe('Podlewajnik E2E Tests', () => {
     await expect(plantTile).toBeVisible();
 
     await plantTile.click();
+
     await expect(
-      page.locator(`.tile-content:has-text("${plantName}")`),
+      plantTile.locator(`.tile-content:has-text("${plantName}")`),
     ).toBeVisible();
     await expect(
-      page.locator(`.tile-content:has-text("${plantLocation}")`),
+      plantTile.locator(`.tile-content:has-text("${plantLocation}")`),
     ).toBeVisible();
     await expect(
-      page.locator(`.tile-content:has-text("${plantDescription}")`),
+      plantTile.locator(`.tile-content:has-text("${plantDescription}")`),
     ).toBeVisible();
     await expect(
-      page.locator(`.tile-content:has-text("${plantWatering}")`),
+      plantTile.locator(`.tile-content:has-text("${plantWatering}")`),
     ).toBeVisible();
   });
 
