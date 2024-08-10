@@ -69,4 +69,5 @@ test.describe('Actions on login page', () => {
       await page.waitForURL('/');
       await expect(page).toHaveURL('/');
     });
+    
 });
